@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./config');
+const path = require('path');
 
 // connect to the database and load models
 require('./server/models').connect(config.dbUri);
@@ -31,8 +32,12 @@ const apiRoutes = require('./server/routes/api');
 app.use('/auth', authRoutes);
 app.use('/api', apiRoutes);
 
+// fallbacl to serve routes via reload
+app.get('*', function (request, response){
+    response.sendFile(path.join(__dirname, './server/static', 'index.html'));
+});
 
 // start the server
 app.listen(4000, () => {
-  console.log('Server is running on http://localhost:3000 or http://127.0.0.1:3000');
+  console.log('Server is running on http://localhost:4000 or http://127.0.0.1:4000');
 });

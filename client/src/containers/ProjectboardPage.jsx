@@ -1,9 +1,9 @@
 import React from 'react';
-import Auth from '../modules/Auth';
-import Dashboard from '../components/Dashboard.jsx';
+import Projectboard from "../components/Projectboard.jsx";
+import Auth from "../modules/Auth";
 
 
-class DashboardPage extends React.Component {
+class ProjectboardPage extends React.Component {
 
     /**
      * Class constructor.
@@ -21,7 +21,7 @@ class DashboardPage extends React.Component {
      */
     componentDidMount() {
         const xhr = new XMLHttpRequest();
-        xhr.open('get', '/api/dashboard');
+        xhr.open('get', '/api/projectboard');
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         // set the authorization HTTP header
         xhr.setRequestHeader('Authorization', `bearer ${Auth.getToken()}`);
@@ -40,9 +40,9 @@ class DashboardPage extends React.Component {
      * Render the component.
      */
     render() {
-        return (<Dashboard secretData={this.state.secretData}/>);
+        return (<Projectboard secretData={this.state.secretData}/>);
     }
 
 }
 
-export default DashboardPage;
+export default ProjectboardPage;
