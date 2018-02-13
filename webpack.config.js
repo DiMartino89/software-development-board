@@ -25,6 +25,10 @@ module.exports = {
         }],
     },
 
+    devServer: {
+        historyApiFallback: true,
+    },
+
     // start Webpack in a watch mode, so Webpack will rebuild the bundle on changes
     watch: true
 };
