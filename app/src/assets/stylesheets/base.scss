@@ -1,0 +1,175 @@
+// Mixins
+@import "partials/mixins";
+// Variables
+@import "partials/variables";
+// Module states
+@import "partials/state";
+// ========================
+// Template components
+// ========================
+@import "partials/header";
+// ========================
+// Multi-use components
+// ========================
+@import "partials/buttons";
+@import "partials/grid";
+@import "partials/forms";
+// ========================
+// Modal component
+// ========================
+@import '../../../node_modules/react-responsive-modal/lib/react-responsive-modal.css';
+
+html, body, #root {
+  min-height: 100%;
+  min-width: 100%;
+  margin: 0;
+  padding: 0;
+  @include font-face(Sans-Serif, 14px, normal);
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+.clearfix {
+  @include clearfix();
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.container {
+  padding: 0 $wrapper-horiz-pad;
+}
+
+main {
+  padding: 10px;
+}
+
+//Stuff to put in components later
+.list__header {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.list__item {
+  background: #EEE;
+  margin: 20px 0;
+}
+
+// Grid Layout
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+  background: #DDD;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top;
+  background: #FFF;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform;
+}
+
+.react-grid-item.resizing {
+  z-index: 1;
+  will-change: width, height;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  will-change: transform;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: red;
+  opacity: 0.2;
+  transition-duration: 100ms;
+  z-index: 2;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+.col-lg-2 {
+  display: inline-block;
+}
+
+// Tickets
+.ticket__row {
+  display: table;
+  width: 100%;
+  padding: 2px 5px;
+  margin: 2px 0;
+}
+
+.ticket__name {
+  width: 100%;
+  margin: 0;
+  float: left;
+  text-align: left;
+}
+
+.ticket__user-label {
+  display: inline-block;
+  width: 80%;
+  margin: 0;
+  float: left;
+  text-align: left;
+  line-height: 30px;
+}
+
+.ticket__user-image {
+  display: inline-block;
+  width: 20%;
+  float: right;
+  text-align: center;
+}
+
+//Dashboard
+.list__project {
+  background: #DDD;
+  margin: 10px 0;
+  padding: 5px;
+}
+
+.list__ticket {
+  background: #EEE;
+  margin: 5px 0;
+  padding: 5px 10px;
+}

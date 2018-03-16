@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import Container from './drag-and-drop/Container.jsx'
+import Container from './single-project/Container.jsx'
 
 const Projectboard = () => (
 
