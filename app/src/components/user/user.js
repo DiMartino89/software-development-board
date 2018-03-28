@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import {reduxForm} from 'redux-form';
 import {Link} from 'react-router-dom';
 import GenericForm from '../form-fields/generic-form';
-import {getAuthenticatedUser, getUser, editUser, postAvatar} from '../../redux/modules/user';
+import {getAuthenticatedUser, getUser, editUser, deleteUser, postAvatar} from '../../redux/modules/user';
 import Modal from 'react-responsive-modal';
 import 'react-responsive-modal/lib/react-responsive-modal.css';
 
@@ -22,6 +22,7 @@ export class UserProfile extends Component {
         }),
         handleSubmit: PropTypes.func,
         updateUser: PropTypes.func,
+        deleteUser: PropTypes.func,
         /*errors: errorPropTypes,
         message: PropTypes.string,
         loading: PropTypes.bool,*/
@@ -112,6 +113,11 @@ export class UserProfile extends Component {
         this.props.updateUser(id, userData);
     };
 
+    deleteProfile = () => {
+        const userId = window.location.href.split('/')[4].split('-')[0];
+        this.props.deleteUser(userId);
+    };
+
     render = () => {
         const {handleSubmit, errors, message} = this.props;
         const {open} = this.state;
@@ -129,6 +135,7 @@ export class UserProfile extends Component {
                 <div>
                     <img src={user.avatar} className="user-avatar" style={divStyle} />
                     <p>{user.firstName} {user.lastName}</p>
+                    {isCurrUser ? <button onClick={() => this.deleteProfile} className="button is-primary">Delete Profile</button> : ''}
                     {isCurrUser ? <button onClick={this.onOpenModal}>Update Profile</button>: ''}
                     <Modal open={open} onClose={this.onCloseModal} little>
                         <h2>Update User</h2>
@@ -167,6 +174,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         updateUser: (id, formData) => {
             dispatch(editUser(id, formData));
+        },
+        deleteUser: (id) => {
+            dispatch(deleteUser(id));
         },
         uploadAvatar: (formData) => {
             dispatch(postAvatar(formData));

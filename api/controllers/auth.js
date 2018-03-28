@@ -99,6 +99,7 @@ exports.register = async (ctx, next) => {
                     password,
                     email,
                     avatar: ctx.request.body.avatar,
+                    invitations: ctx.request.body.invitations,
                     projects: ctx.request.body.projects,
                     tickets: ctx.request.body.tickets
                 });

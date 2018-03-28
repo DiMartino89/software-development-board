@@ -33,7 +33,8 @@ export class Board extends Component {
             open: false,
             open2: false,
             currentTicket: null,
-            droppedTicket: null
+            droppedTicket: null,
+            invitations: []
         };
     }
 
@@ -51,6 +52,7 @@ export class Board extends Component {
 
     static propTypes = {
         handleSubmit: PropTypes.func,
+        updateProject: PropTypes.func,
         createSprint: PropTypes.func,
         createTicket: PropTypes.func,
         updateTicket: PropTypes.func,
@@ -142,7 +144,7 @@ export class Board extends Component {
     ];
 
     createOptions() {
-        if (!this.props.project) {
+        if (!this.props.project && !this.props.user) {
             return null;
         } else {
             const options = [];
@@ -151,7 +153,7 @@ export class Board extends Component {
                 const option = {
                     value: i + 1,
                     label: user.firstName + ' ' + user.lastName,
-                    id: this.props.project.users[i],
+                    id: user.id,
                     className: 'user-option'
                 };
                 options.push(option);
@@ -177,6 +179,29 @@ export class Board extends Component {
                 options.push(option);
             }
             const defaultOption = {value: 0, label: 'Kein Sprint ausgewählt', className: 'sprint-option'};
+            options.unshift(defaultOption);
+            return options;
+        }
+    };
+
+    createOptions3() {
+        if (!this.props.project) {
+            return null;
+        } else {
+            const options = [];
+            const $this = this;
+            Object.keys(this.props.users).forEach(function (key, index) {
+                if (!$this.props.project.users.includes(key)) {
+                    const option = {
+                        value: index + 1,
+                        label: $this.props.users[key].firstName + ' ' + $this.props.users[key].lastName,
+                        id: $this.props.users[key].id,
+                        className: 'invite-option'
+                    };
+                    options.push(option);
+                }
+            });
+            const defaultOption = {value: 0, label: 'Kein User ausgewählt', className: 'invite-option'};
             options.unshift(defaultOption);
             return options;
         }
@@ -208,7 +233,7 @@ export class Board extends Component {
     };
 
     onSprintChange = obj => {
-        window.location.href = 'http://localhost:8080/sprint/' + window.location.href.split('/')[4] + '-' + obj.value;
+        window.location.href = 'http://localhost:8080/sprint/' + window.location.href.split('/')[4] + '-' + (obj.value - 1);
     };
 
     onUserChange = (tId, obj) => {
@@ -226,7 +251,7 @@ export class Board extends Component {
             }
             this.props.updateUser(oldUserId, oldUserData);
         }
-        if(obj.value !== 0) {
+        if (obj.value !== 0) {
             // Setup Data for new User
             const newUserId = this.props.project.users[obj.value - 1];
             const newUserData = this.getUser(newUserId);
@@ -240,6 +265,45 @@ export class Board extends Component {
         delete projectData.id;
         projectData.tickets[tId].user = obj.value === 0 ? '' : this.props.project.users[obj.value - 1];
         this.props.updateTicket(id, projectData);
+    };
+
+    onInviteChange = obj => {
+        let found = false;
+        for (let i = 0; i < this.state.invitations.length; i++) {
+            if (this.state.invitations[i].id === obj.id) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            this.state.invitations.push(obj);
+            localStorage.setItem('invitations', JSON.stringify(this.state.invitations));
+            location.reload();
+        }
+    };
+
+    getInvitations = () => {
+        if (localStorage.getItem("invitations") !== null && JSON.parse(localStorage.getItem("invitations")).length > 0) {
+            this.state.invitations = JSON.parse(localStorage.getItem("invitations"));
+        } else {
+            this.state.invitations = [];
+        }
+    };
+
+    removeUser = index => {
+        this.state.invitations.splice(index, 1);
+        localStorage.setItem('invitations', JSON.stringify(this.state.invitations));
+        location.reload();
+    };
+
+    removeMember = (uId) => {
+        const projectData = this.props.project;
+        const id = projectData.id;
+        delete projectData.id;
+        const index = projectData.users.indexOf(uId);
+        projectData.users.splice(index, 1);
+        this.props.updateProject(id, projectData);
+        location.reload();
     };
 
     onDragStop = (e, node) => {
@@ -260,7 +324,7 @@ export class Board extends Component {
                 for (let i = 0; i < projectData.sprints.length; i++) {
                     if (projectData.sprints[i].isActive) {
                         projectData.sprints[i].tickets.push(this.state.droppedTicket);
-                        projectData.tickets[this.state.droppedTicket].sprint.push(projectData.sprints[i].id);
+                        projectData.tickets[this.state.droppedTicket].sprint = projectData.sprints[i].id;
                     }
                 }
             }
@@ -273,10 +337,8 @@ export class Board extends Component {
                 const userId = userData.id;
                 const ticketId = this.props.project.id + '-' + this.state.droppedTicket;
                 userData.tickets.push(ticketId);
-                alert(JSON.stringify(userData));
                 this.props.updateUser(userId, userData);
             }
-            alert(JSON.stringify(projectData));
             this.props.updateTicket(id, projectData);
         }
     };
@@ -288,6 +350,7 @@ export class Board extends Component {
         formProps.id = formData.tickets.length;
         formProps.state = 0;
         formProps.user = '';
+        formProps.originUser = this.props.user.id;
         formProps.createdAt = Moment(new Date()).format('DD.MM.YYYY HH:mm');
         formProps.updatedAt = Moment(new Date()).format('DD.MM.YYYY HH:mm');
         formProps.sprint = '';
@@ -307,6 +370,32 @@ export class Board extends Component {
         formProps.tickets = [];
         formData.sprints.push(formProps);
         this.props.createSprint(id, formData);
+    };
+
+    inviteUsers = () => {
+        for (let i = 0; i < this.state.invitations.length; i++) {
+            const userData = this.getUser(this.state.invitations[i].id);
+            const userId = userData.id;
+            const formProps = {
+                user: this.props.user.id,
+                project: this.props.project.id
+            };
+            delete userData.id;
+            let found = false;
+            for (let i = 0; i < userData.invitations.length; i++) {
+                if (userData.invitations[i].project === this.props.project.id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                userData.invitations.push(formProps);
+                this.props.updateUser(userId, userData);
+            }
+        }
+        this.state.invitations = [];
+        localStorage.setItem('invitations', JSON.stringify(this.state.invitations));
+        location.reload();
     };
 
     generateDOM() {
@@ -332,10 +421,10 @@ export class Board extends Component {
                 }
             }
 
-            if(this.props.users.length !== 0) {
+            if (this.props.users.length !== 0) {
                 return _.map(_.range(tickets.length), function (i) {
                     let user = {};
-                    if(tickets[i].user !== '' ) {
+                    if (tickets[i].user !== '') {
                         user = $this.getUser(tickets[i].user);
                     }
                     return (
@@ -400,16 +489,24 @@ export class Board extends Component {
             return null;
         } else {
             const project = this.props.project;
-            const sprints = project.sprints;
+            const currUser = this.props.user;
+            const isCurrUser = project.users[0] === currUser.id;
+            const id = project.id;
             const options = this.createOptions2();
-            const $this = this;
+            const options2 = this.createOptions3();
             this.state.layout = this.generateLayout();
+            this.getInvitations();
+            const $this = this;
+
             return (
                 <div>
                     <div className="col-lg-12">
-                        <p>{project.name}</p>
-                        <button onClick={this.onOpenModal}>Create Ticket</button>
-                        <button onClick={this.onOpenModal2}>Create Sprint</button>
+                        <h2>{project.name}</h2>
+                        <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
+                        <button onClick={this.onOpenModal2} className="button is-primary">Create Sprint</button>
+                        {isCurrUser ? <button onClick={() => this.deleteProject} className="button is-primary">Delete
+                            Project</button> : ''}
+                        <Link className="inline" to={"/backlog/" + id}>Zum Backlog</Link>
                         <Select
                             id="sprint-select"
                             options={options}
@@ -418,6 +515,36 @@ export class Board extends Component {
                             onChange={(e) => $this.onSprintChange(e)}
                             searchable={true}
                         />
+                        <h4>Mitglieder:</h4>
+                        <ul id="members-list">
+                            {_.map(_.range(project.users.length), function (i) {
+                                const user = $this.getUser(project.users[i]);
+                                return <li className="member__item">
+                                    <span>{user.firstName} {user.lastName}</span>
+                                    {isCurrUser ?
+                                        <button onClick={() => $this.removeMember(project.users[i])}
+                                                className="button is-primary">Remove</button> : ''}
+                                </li>
+                            })}
+                        </ul>
+                        <h4>Einladungen:</h4>
+                        <Select
+                            id="invitation"
+                            options={options2}
+                            name="invitation"
+                            value={options2[0]}
+                            onChange={(e) => $this.onInviteChange(e)}
+                            searchable={true}
+                        />
+                        <ul id="invitations-list">
+                            {_.map(_.range($this.state.invitations.length), function (i) {
+                                return <li className="invitation__item">
+                                    <span>{$this.state.invitations[i].label}</span>
+                                    <button onClick={() => $this.removeUser} className="button is-primary">X</button>
+                                </li>
+                            })}
+                        </ul>
+                        <button onClick={this.inviteUsers} className="button is-primary">Einladen</button>
                     </div>
                     <div className="col-lg-2">Offen</div>
                     <div className="col-lg-2">In Arbeit</div>
@@ -477,6 +604,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         loadUsers: () => {
             dispatch(getUsers());
+        },
+        updateProject: (id, formData) => {
+            dispatch(editProject(id, formData));
         },
         createSprint: (id, formData) => {
             dispatch(editProject(id, formData));

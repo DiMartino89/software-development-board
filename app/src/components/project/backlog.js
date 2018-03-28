@@ -22,7 +22,7 @@ const form = reduxForm({
     form: 'createTicket',
 });
 
-export class SingleSprint extends Component {
+export class Backlog extends Component {
     constructor(props) {
         super(props);
 
@@ -134,26 +134,6 @@ export class SingleSprint extends Component {
         }
     };
 
-    createOptions2() {
-        if (!this.props.project) {
-            return null;
-        } else {
-            const options = [];
-            for (let i = 0; i < this.props.project.sprints.length; i++) {
-                const option = {
-                    value: i + 1,
-                    label: this.props.project.sprints[i].name,
-                    id: this.props.project.sprints[i].id,
-                    className: 'user-option'
-                };
-                options.push(option);
-            }
-            const defaultOption = {value: 0, label: 'Kein Sprint ausgewählt', className: 'sprint-option'};
-            options.unshift(defaultOption);
-            return options;
-        }
-    };
-
     componentDidMount() {
         this.props.loadProject();
         this.props.loadUsers();
@@ -169,10 +149,6 @@ export class SingleSprint extends Component {
 
     onCloseModal = () => {
         this.setState({open: false});
-    };
-
-    onSprintChange = obj => {
-        window.location.href = window.location.href + '_' + obj.value;
     };
 
     onUserChange = (tId, obj) => {
@@ -215,33 +191,7 @@ export class SingleSprint extends Component {
             const projectData = this.props.project;
             const id = window.location.href.split('/')[4];
             delete projectData.id;
-            projectData.tickets[this.state.droppedTicket].state = layout[this.state.droppedTicket].x;
-            // Set new sprint
-            if (projectData.sprints.length !== 0 && layout[this.state.droppedTicket].x < 5) {
-                projectData.tickets[this.state.droppedTicket].sprint = [];
-                for (let i = 0; i < projectData.sprints.length; i++) {
-                    if (projectData.sprints[i].isActive) {
-                        projectData.sprints[i].tickets.push(projectData.tickets[this.state.droppedTicket]);
-                        projectData.tickets[this.state.droppedTicket].sprint.push(projectData.sprints[i]);
-                    }
-                }
-            }
-            if (projectData.tickets[this.state.droppedTicket].user === {}) {
-                // If ticket has no current user
-                projectData.tickets[this.state.droppedTicket].user = this.props.user;
-                const userData = this.props.user;
-                const userId = userData.id;
-                const ticket = {project: this.props.project.id, ticket: this.state.droppedTicket};
-                userData.tickets.push(ticket);
-                this.props.updateUser(userId, userData);
-            } else {
-                // If ticket has current user
-                const userData = projectData.tickets[this.state.droppedTicket].user;
-                const userId = userData.id;
-                const ticket = {project: this.props.project.id, ticket: this.state.droppedTicket};
-                userData.tickets.push(ticket);
-                this.props.updateUser(userId, userData);
-            }
+            projectData.tickets[this.state.droppedTicket].sprint = layout[this.state.droppedTicket].x - 1;
             this.props.updateTicket(id, projectData);
         }
     };
@@ -264,19 +214,33 @@ export class SingleSprint extends Component {
         this.props.createTicket(id, formData);
     };
 
+    generateHead() {
+        if (!this.props.project) {
+            return null;
+        } else {
+            const sprints = this.props.project.sprints;
+            const amount = this.props.project.sprints.length;
+            const colStyle = {
+                width: ((amount + 1) * 197) / (amount + 1)
+            };
+            return _.map(_.range(sprints.length), function (i) {
+                return (
+                    <div className="backlog__col" style={colStyle}>
+                        {sprints[i].id} - {sprints[i].name}
+                    </div>
+                );
+            });
+        }
+    }
+
     generateDOM() {
-        if (!this.props.project && !this.props.user) {
+        if (!this.props.project && !this.props.users) {
             return null;
         } else {
             const options = this.createOptions();
-            const projectTickets = this.props.project.tickets;
-            const sprintTickets = this.props.project.sprints[window.location.href.split('-')[1]].tickets;
-            const tickets = [];
-            for(let i=0; i < sprintTickets.length; i++) {
-                tickets.push(projectTickets[sprintTickets[i]]);
-            }
+            const tickets = this.props.project.tickets;
             const prefix = this.props.project.prefix;
-            const currProject = window.location.href.split('/')[4].split('-')[0];
+            const currProject = window.location.href.split('/')[4];
             const divStyle = {
                 width: '30px',
                 height: '30px',
@@ -292,37 +256,42 @@ export class SingleSprint extends Component {
                 }
             }
 
-            return _.map(_.range(tickets.length), function (i) {
-                const user = $this.getUser(tickets[i].user);
-                return (
-                    <div key={i}>
-                        <div className="ticket__row">
-                            <Link className="ticket__link" to={"/ticket/" + currProject + "-" + i}>
-                                <p className="ticket__name">{prefix + '-' + tickets[i].id}</p>
-                            </Link>
+            if (this.props.users.length !== 0) {
+                return _.map(_.range(tickets.length), function (i) {
+                    let user = {};
+                    if (tickets[i].user !== '') {
+                        user = $this.getUser(tickets[i].user);
+                    }
+                    return (
+                        <div key={i}>
+                            <div className="ticket__row">
+                                <Link className="ticket__link" to={"/ticket/" + currProject + "-" + i}>
+                                    <p className="ticket__name">{prefix + '-' + tickets[i].id}</p>
+                                </Link>
+                            </div>
+                            <div className="ticket__row">
+                                <p className="ticket__user-label">Bearbeiter:</p>
+                                <img
+                                    src={Object.keys(user).length !== 0 ? user.avatar : apiUrl + 'default.png'}
+                                    className="ticket__user-image"
+                                    style={divStyle}
+                                    title={Object.keys(user).length !== 0 ? user.firstName + ' ' + user.lastName : 'Kein Bearbeiter'}
+                                />
+                            </div>
+                            <div className="ticket__row">
+                                <Select
+                                    id="user-select"
+                                    options={options}
+                                    name="selected-user"
+                                    value={options[Object.keys(user).length !== 0 ? getCurrOption(user.id) : 0]}
+                                    onChange={(e) => $this.onUserChange(tickets[i].id, e)}
+                                    searchable={true}
+                                />
+                            </div>
                         </div>
-                        <div className="ticket__row">
-                            <p className="ticket__user-label">Bearbeiter:</p>
-                            <img
-                                src={Object.keys(user).length !== 0 ? user.avatar : apiUrl + 'default.png'}
-                                className="ticket__user-image"
-                                style={divStyle}
-                                title={Object.keys(user).length !== 0 ? user.firstName + ' ' + user.lastName : 'Kein Bearbeiter'}
-                            />
-                        </div>
-                        <div className="ticket__row">
-                            <Select
-                                id="user-select"
-                                options={options}
-                                name="selected-user"
-                                value={options[Object.keys(user).length !== 0 ? getCurrOption(user.id) : 0]}
-                                onChange={(e) => $this.onUserChange(tickets[i].id, e)}
-                                searchable={true}
-                            />
-                        </div>
-                    </div>
-                );
-            });
+                    );
+                });
+            }
         }
     }
 
@@ -330,16 +299,10 @@ export class SingleSprint extends Component {
         if (!this.props.project) {
             return null;
         } else {
-            const projectTickets = this.props.project.tickets;
-            const sprintTickets = this.props.project.sprints[window.location.href.split('-')[1]].tickets;
-            const tickets = [];
-            for(let i=0; i < sprintTickets.length; i++) {
-                tickets.push(projectTickets[sprintTickets[i]]);
-            }
-            if (tickets.length > 0) {
-                return _.map(tickets, function (item, i) {
+            if (this.props.project.tickets.length > 0) {
+                return _.map(this.props.project.tickets, function (item, i) {
                     return {
-                        x: item.state ? item.state : 0,
+                        x: item.sprint !== "" ? (item.sprint + 1) : 0,
                         y: i,
                         w: 1,
                         h: 3,
@@ -355,41 +318,35 @@ export class SingleSprint extends Component {
     render = () => {
         const {handleSubmit, errors, message} = this.props;
         const {open} = this.state;
-
         if (!this.props.project) {
             return null;
         } else {
-            //
             const project = this.props.project;
-            const sprint = this.props.project.sprints[window.location.href.split('-')[1]];
-            const options = this.createOptions2();
-            const $this = this;
+            const amount = this.props.project.sprints.length;
+            const layoutStyle = {
+                width: ((amount + 1) * 207) + 10
+            };
+            const colStyle = {
+                width: ((amount + 1) * 197) / (amount + 1)
+            };
             this.state.layout = this.generateLayout();
             return (
-                <div>
+                <div className="backlog">
                     <div className="col-lg-12">
-                        <h2>{project.name} - {sprint.name}</h2>
+                        <h2>{project.name}</h2>
                         <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
-                        <Select
-                            id="sprint-select"
-                            options={options}
-                            name="selected-sprint"
-                            value={options[sprint.id + 1]}
-                            onChange={(e) => $this.onSprintChange(e)}
-                            searchable={true}
-                        />
                     </div>
-                    <div className="col-lg-2">Offen</div>
-                    <div className="col-lg-2">In Arbeit</div>
-                    <div className="col-lg-2">To Review</div>
-                    <div className="col-lg-2">In Review</div>
-                    <div className="col-lg-2">Freigabe</div>
-                    <div className="col-lg-2">Geschlossen</div>
+                    <div className="backlog__head" style={layoutStyle}>
+                        <div className="backlog__col" style={colStyle}>Offen</div>
+                        {this.generateHead()}
+                    </div>
                     <ReactGridLayout
                         layout={this.state.layout}
                         {...this.props}
+                        cols={this.props.project.sprints.length + 1}
                         onLayoutChange={this.onLayoutChange}
                         onDragStop={this.onDragStop}
+                        style={layoutStyle}
                     >
                         {this.generateDOM()}
                     </ReactGridLayout>
@@ -399,7 +356,7 @@ export class SingleSprint extends Component {
                             onSubmit={handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
-                            formSpec={SingleSprint.formSpec}
+                            formSpec={Backlog.formSpec}
                             submitText="Create"
                         />
                     </Modal>
@@ -423,7 +380,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         loadProject: () => {
-            dispatch(getProject(window.location.href.split('/')[4].split('-')[0]));
+            dispatch(getProject(window.location.href.split('/')[4]));
         },
         loadUsers: () => {
             dispatch(getUsers());
@@ -443,4 +400,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(form(SingleSprint));
+export default connect(mapStateToProps, mapDispatchToProps)(form(Backlog));

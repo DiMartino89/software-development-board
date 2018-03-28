@@ -18,7 +18,7 @@ export class GetProjects extends Component {
 
     render = () => {
         Moment.locale('de');
-        if (!this.props.projects) {
+        if (!this.props.projects && !this.props.user) {
             return null;
         } else {
             const projects = this.props.projects;

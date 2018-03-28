@@ -82,7 +82,8 @@ export const getUsers = () => async (dispatch) => {
  */
 export const deleteUser = id => async (dispatch) => {
     try {
-        const response = await del(dispatch, DELETE_USER, `${PROJECT_ENDPOINT_BASE}/${id}`, true);
+        const response = await del(dispatch, DELETE_USER, `${USER_ENDPOINT_BASE}/${id}`, true);
+        window.location.href = `${getAppUrl()}/login`;
         return Promise.resolve(response);
     } catch (err) {
         await handleError(dispatch, err, DELETE_USER);

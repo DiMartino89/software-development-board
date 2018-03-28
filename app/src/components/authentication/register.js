@@ -66,7 +66,8 @@ class Register extends Component {
     ];
 
     handleFormSubmit = formProps => {
-        formProps.avatar = 'http://localhost:3000/default.png'
+        formProps.avatar = 'http://localhost:3000/default.png';
+        formProps.invitations = [];
         formProps.projects = [];
         formProps.tickets = [];
         this.props.register(formProps);

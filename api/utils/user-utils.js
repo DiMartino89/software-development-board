@@ -15,6 +15,7 @@ const standardizeUser = user => ({
     email: _.get(user, 'email') || '',
     role: _.get(user, 'role') || '',
     avatar: _.get(user, 'avatar') || '',
+    invitations: _.get(user, 'invitations') || '',
     projects: _.get(user, 'projects') || '',
     tickets: _.get(user, 'tickets') || '',
 });

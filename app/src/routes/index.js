@@ -8,6 +8,7 @@ import RequireAuth from '../components/hoc/require-auth';
 import AuthenticatedRoutes from './authenticated/index';
 import CreateProject from '../components/project/create';
 import GetProjects from '../components/project/getAll';
+import Backlog from '../components/project/backlog';
 import Board from "../components/project/ticket";
 import SingleTicket from "../components/project/singleTicket";
 import SingleSprint from "../components/project/sprint";
@@ -24,6 +25,7 @@ const TopLevelRoutes = () => (
         <Route path="/project/create" component={RequireAuth(CreateProject)}/>
         <Route path="/projects" component={RequireAuth(GetProjects)}/>
         <Route path="/project/:id" component={RequireAuth(Board)}/>
+        <Route path="/backlog/:id" component={RequireAuth(Backlog)}/>
         <Route path="/sprint/:id" component={RequireAuth(SingleSprint)}/>
         <Route path="/ticket/:id" component={RequireAuth(SingleTicket)}/>
     </Switch>

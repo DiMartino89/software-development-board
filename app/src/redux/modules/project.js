@@ -88,6 +88,7 @@ export const getProjects = () => async (dispatch) => {
 export const deleteProject = id => async (dispatch) => {
     try {
         const response = await del(dispatch, DELETE_PROJECT, `${PROJECT_ENDPOINT_BASE}/${id}`, true);
+        window.location.href = `${getAppUrl()}/dashboard`;
         return Promise.resolve(response);
     } catch (err) {
         await handleError(dispatch, err, DELETE_PROJECT);

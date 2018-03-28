@@ -27,6 +27,7 @@ const UserSchema = new Schema({
         avatar: {type: String, default: "http://localhost:3000/default.png"},
         resetPasswordToken: { type: String },
         resetPasswordExpires: { type: Date },
+        invitations: [],
         projects: [],
         tickets: [],
         deactivated: { type: Boolean, default: false },
