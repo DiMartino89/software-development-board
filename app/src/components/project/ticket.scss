@@ -74,6 +74,12 @@
     width: 100%;
     margin: 0 0 4px;
   }
+  //
+  .file__item {
+    img {
+      cursor: pointer;
+    }
+  }
 
   .log__item {
 
@@ -105,5 +111,18 @@
     &.p-4 {
       color: rgba(255,48,68, 1);
     }
+  }
+}
+
+.image-modal {
+  width: auto;
+  height: auto;
+  max-width: 700px;
+  max-height: 600px;
+  padding: 40px 20px !important;
+
+  img {
+    width: 100%;
+    height: auto;
   }
 }

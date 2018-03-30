@@ -54,6 +54,7 @@ export class Dashboard extends Component {
             const projects = this.props.projects;
             const userId = this.props.user.id;
             const $this = this;
+
             return (
                 <div>
                     <h2 className="dashboard__headline">Dashboard</h2>
@@ -61,7 +62,7 @@ export class Dashboard extends Component {
                         <ul>
                             <div className="dashboard__list-header">ID</div>
                             <div className="dashboard__list-header">Name</div>
-                            <div className="dashboard__list-header">Owner</div>
+                            <div className="dashboard__list-header">Projektinhaber</div>
                             <div className="dashboard__list-header">Projektstart</div>
                             <div className="dashboard__list-header">Livegang</div>
                             <div className="dashboard__list-header">Link</div>
@@ -70,7 +71,7 @@ export class Dashboard extends Component {
                                 const projectOwner = $this.getUser(projects[key].users[0]);
                                 if (projects[key].users.includes(userId)) {
                                     return <li className="dashboard__list-item">
-                                        <div className="dashboard__list-info">{key.substring(0,10)}</div>
+                                        <div className="dashboard__list-info">{key.substring(0, 10)}</div>
                                         <div className="dashboard__list-info">{projects[key].name}</div>
                                         <div
                                             className="dashboard__list-info">{projectOwner.firstName} {projectOwner.lastName}</div>
@@ -79,7 +80,8 @@ export class Dashboard extends Component {
                                         <div
                                             className="dashboard__list-info">{Moment(projects[key].end).format('DD.MM.YYYY')}</div>
                                         <div className="dashboard__list-info">
-                                            <Link className="inline" to={"/project/" + key} title="Show Project"><i className="material-icons">visibility</i></Link>
+                                            <Link className="inline" to={"/project/" + key} title="Show Project"><i
+                                                className="material-icons">visibility</i></Link>
                                             {isProjectOwner ? <button onClick={() => $this.deleteProject(key)}
                                                                       className="button is-primary">Delete
                                                 Project</button> : ''}
@@ -88,8 +90,8 @@ export class Dashboard extends Component {
                                             <div className="dashboard__sublist-header">ID</div>
                                             <div className="dashboard__sublist-header">Name</div>
                                             <div className="dashboard__sublist-header">Status</div>
-                                            <div className="dashboard__sublist-header">Category</div>
-                                            <div className="dashboard__sublist-header">Priority</div>
+                                            <div className="dashboard__sublist-header">Kategorie</div>
+                                            <div className="dashboard__sublist-header">Priorität</div>
                                             <div className="dashboard__sublist-header">Link</div>
                                             {_.map(_.range(projects[key].tickets.length), function (i) {
                                                 const ticketOwner = projects[key].tickets[i].originUser === userId;
@@ -107,11 +109,11 @@ export class Dashboard extends Component {
                                                             className="dashboard__ticket-item">{priority[projects[key].tickets[i].priority]}</div>
                                                         <div className="dashboard__ticket-item">
                                                             <Link className="inline"
-                                                                  to={"/ticket/" + key + '-' + projects[key].tickets[i].id}>Zum
-                                                                Ticket</Link>
+                                                                  to={"/ticket/" + key + '-' + projects[key].tickets[i].id}
+                                                                  title="Show Project"><i
+                                                                className="material-icons">visibility</i></Link>
                                                             {ticketOwner ? <button onClick={() => $this.deleteTicket(i)}
-                                                                                   className="button is-primary">Delete
-                                                                Ticket</button> : ''}
+                                                                                   className="button is-primary">Ticket löschen</button> : ''}
                                                         </div>
                                                     </div>
                                                 }

@@ -25,6 +25,8 @@
 @import "../../components/project/project";
 @import "../../components/project/sprint";
 @import "../../components/project/ticket";
+@import "../../components/project/backlog";
+@import "../../components/user/user";
 
 html, body, #root {
   min-height: 100%;
@@ -137,6 +139,11 @@ label {
 .user-avatar {
   width: 30px !important;
   height: 30px;
+
+  &--large {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 //Stuff to put in components later

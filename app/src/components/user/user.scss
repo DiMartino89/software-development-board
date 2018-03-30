@@ -1,0 +1,59 @@
+// Single sprint
+.user__container {
+  display: block;
+  height: auto;
+  margin: 0 auto 20px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.user__header {
+
+  h2 {
+    display: inline-block;
+    float: left;
+    width: 50%;
+  }
+
+  button {
+    display: inline-block;
+    margin: 6px 0;
+    width: 15%;
+    float: right;
+  }
+}
+
+.user__avatar-container {
+  display: table;
+  width: 100%;
+
+  .user-avatar--large {
+    margin: 10px 10px 10px 0;
+  }
+}
+
+.user__info {
+  background: rgba(180,180,180,0.7);
+  display: inline-block;
+  margin: 0 2px;
+  padding: 10px;
+  width: calc(100% - 4px);
+  height: auto;
+  min-height: 250px;
+  float: left;
+
+  &-container {
+    display: table;
+    width: 100%;
+    margin: 0 0 4px;
+  }
+
+  .user__tickets-headline {
+    padding-left: 20px;
+    font-weight: bold;
+  }
+
+  .user__tickets-sublist {
+    padding-left: 20px;
+  }
+}

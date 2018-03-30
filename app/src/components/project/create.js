@@ -8,6 +8,7 @@ import Textarea from '../form-fields/text-area';
 import GenericForm from '../form-fields/generic-form';
 import {createProject} from '../../redux/modules/project';
 import {errorPropTypes} from '../../util/proptype-utils';
+import Moment from "moment/moment";
 
 const form = reduxForm({
     form: 'postProject',
@@ -54,6 +55,7 @@ class CreateProject extends Component {
             label: 'Startdatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
         {
@@ -62,6 +64,7 @@ class CreateProject extends Component {
             label: 'Enddatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
     ];
@@ -81,7 +84,7 @@ class CreateProject extends Component {
             <div className={`creation__container ${loading ? 'is-loading' : ''}`}>
                 <h2>Create Project</h2>
                 <GenericForm
-                    onSubmit={() => handleSubmit(this.handleFormSubmit)}
+                    onSubmit={handleSubmit(this.handleFormSubmit)}
                     //errors={errors}
                     //message={message}
                     formSpec={CreateProject.formSpec}

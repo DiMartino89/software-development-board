@@ -143,6 +143,7 @@ export class SingleProject extends Component {
             label: 'Startdatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
         {
@@ -151,6 +152,7 @@ export class SingleProject extends Component {
             label: 'Enddatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
     ];
@@ -188,6 +190,7 @@ export class SingleProject extends Component {
             label: 'Startdatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
         {
@@ -196,6 +199,7 @@ export class SingleProject extends Component {
             label: 'Enddatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
     ];
@@ -605,7 +609,7 @@ export class SingleProject extends Component {
             } else {
                 timeLeft = Date.parse(project.end) - Date.parse(project.begin);
             }
-            //
+
             return (
                 <div>
                     <div className="project__container">
@@ -614,11 +618,10 @@ export class SingleProject extends Component {
                             {isActive ? <span className="is-active">Active</span> :
                                 <span className="not-active">Not Active</span>}
                             {isProjectOwner ?
-                                <button onClick={() => this.deleteProject} className="button is-primary">Delete
-                                    Project</button> : ''}
+                                <button onClick={() => this.deleteProject} className="button is-primary">Projekt löschen</button> : ''}
                             {isProjectOwner ?
-                                <button onClick={() => this.onOpenModal3} className="button is-primary">Update
-                                    Project</button> : ''}
+                                <button onClick={this.onOpenModal3} className="button is-primary">Update
+                                    Projekt</button> : ''}
                         </div>
                         <div className="project__action">
                             <Select
@@ -631,7 +634,7 @@ export class SingleProject extends Component {
                                 searchable={true}
                             />
                             {isProjectOwner ?
-                                <button onClick={() => this.onOpenModal2} className="button is-primary">Create
+                                <button onClick={this.onOpenModal2} className="button is-primary">Create
                                     Sprint</button> : ''}
                         </div>
                         <div className="project__info-container">
@@ -650,10 +653,10 @@ export class SingleProject extends Component {
 
                                 />
                                 <hr></hr>
-                                <div>Today: {Moment(Date.now()).format('DD.MM.YYYY')}</div>
+                                <div>Heute: {Moment(Date.now()).format('DD.MM.YYYY')}</div>
                                 <div>Start: {Moment(project.begin).format('DD.MM.YYYY')}</div>
-                                <div>End: {Moment(project.end).format('DD.MM.YYYY')}</div>
-                                <div>Left: {Moment(timeLeft).format('DD')} Day(s)</div>
+                                <div>Ende: {Moment(project.end).format('DD.MM.YYYY')}</div>
+                                <div>Verbleibend: {Moment(timeLeft).format('DD')} Tag(e)</div>
                             </div>
                             <div className="project__members">
                                 <label>Mitglieder:</label>
@@ -664,9 +667,9 @@ export class SingleProject extends Component {
                                         return <li className="member__item">
                                         <span><img src={user.avatar}
                                                    className=""/> {user.firstName} {user.lastName}</span>
-                                            {isProjectOwner ?
+                                            {isProjectOwner && currUser.id !== user.id ?
                                                 <button onClick={() => $this.removeMember(project.users[i])}
-                                                        className="button is-primary">Remove</button> : ''}
+                                                        className="button is-primary">X</button> : ''}
                                         </li>
                                     })}
                                 </ul>
@@ -683,17 +686,17 @@ export class SingleProject extends Component {
                                         {_.map(_.range($this.state.invitations.length), function (i) {
                                             return <li className="invitation__item">
                                                 <span>{$this.state.invitations[i].label}</span>
-                                                <button onClick={() => $this.removeUser} className="button is-primary">X
+                                                <button onClick={() => $this.removeUser(i)} className="button is-primary">X
                                                 </button>
                                             </li>
                                         })}
                                     </ul>
-                                    <button onClick={() => this.inviteUsers} className="button is-primary">Einladen</button>
+                                    <button onClick={this.inviteUsers} className="button is-primary">Einladen</button>
                                 </div>
                             </div>
                         </div>
                         <div className="project__tickets">
-                            <button onClick={() => this.onOpenModal} className="button is-primary">Create Ticket</button>
+                            <button onClick={this.onOpenModal} className="button is-primary">Ticket erstellen</button>
                             <a href={"/backlog/" + id} className="inline">
                                 <button className="button is-primary">Zum Backlog</button>
                             </a>
@@ -708,35 +711,35 @@ export class SingleProject extends Component {
                     <ReactGridLayout
                         layout={this.state.layout}
                         {...this.props}
-                        onLayoutChange={() => this.onLayoutChange}
-                        onDragStop={() => this.onDragStop}
+                        onLayoutChange={this.onLayoutChange}
+                        onDragStop={this.onDragStop}
                     >
                         {this.generateDOM()}
                     </ReactGridLayout>
-                    <Modal open={open} onClose={() => this.onCloseModal} id="ticket-create" little>
-                        <h2>Create Ticket</h2>
+                    <Modal open={open} onClose={this.onCloseModal} id="ticket-create" little>
+                        <h2>Ticket erstellen</h2>
                         <GenericForm
-                            onSubmit={() => handleSubmit(this.handleFormSubmit)}
+                            onSubmit={handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleProject.formSpec}
-                            submitText="Create"
+                            submitText="Erstellen"
                         />
                     </Modal>
                     <Modal open={open2} onClose={this.onCloseModal2} id="sprint-create" little>
-                        <h2>Create Sprint</h2>
+                        <h2>Sprint erstellen</h2>
                         <GenericForm
-                            onSubmit={() => handleSubmit(this.handleFormSubmit2)}
+                            onSubmit={handleSubmit(this.handleFormSubmit2)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleProject.formSpec2}
-                            submitText="Create"
+                            submitText="Erstellen"
                         />
                     </Modal>
                     <Modal open={open3} onClose={this.onCloseModal3} id="project-update" little>
-                        <h2>Create Project</h2>
+                        <h2>Update Projekt</h2>
                         <GenericForm
-                            onSubmit={() => handleSubmit(this.handleFormSubmit3)}
+                            onSubmit={handleSubmit(this.handleFormSubmit3)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleProject.formSpec3}

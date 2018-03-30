@@ -3,11 +3,13 @@ import {connect} from "react-redux";
 import TextInput from "../form-fields/text-input";
 import PropTypes from "prop-types";
 import {reduxForm} from 'redux-form';
-import {Link} from 'react-router-dom';
 import GenericForm from '../form-fields/generic-form';
-import {getAuthenticatedUser, getUser, editUser, deleteUser, postAvatar} from '../../redux/modules/user';
+import {getUser, editUser, deleteUser, postAvatar, getUsers} from '../../redux/modules/user';
 import Modal from 'react-responsive-modal';
 import 'react-responsive-modal/lib/react-responsive-modal.css';
+import {getProjects} from "../../redux/modules/project";
+import {resetPassword} from "../../redux/modules/authentication";
+import {getCookie} from "../../util/cookie-utils";
 
 const form = reduxForm({
     form: 'updateUser',
@@ -16,13 +18,14 @@ const form = reduxForm({
 export class UserProfile extends Component {
 
     static propTypes = {
-        currUser: PropTypes.shape({
-            firstName: PropTypes.string,
-            lastName: PropTypes.string,
-        }),
+        authenticated: PropTypes.bool,
         handleSubmit: PropTypes.func,
+        resetPassword: PropTypes.func,
         updateUser: PropTypes.func,
         deleteUser: PropTypes.func,
+        params: PropTypes.shape({
+            token: PropTypes.string,
+        }),
         /*errors: errorPropTypes,
         message: PropTypes.string,
         loading: PropTypes.bool,*/
@@ -39,7 +42,7 @@ export class UserProfile extends Component {
     static formSpec = [
         {
             id: 'firstName',
-            name: 'name.first',
+            name: 'firstName',
             label: 'First Name',
             type: 'text',
             placeholder: 'John',
@@ -47,7 +50,7 @@ export class UserProfile extends Component {
         },
         {
             id: 'lastName',
-            name: 'name.last',
+            name: 'lastName',
             label: 'Last Name',
             type: 'text',
             placeholder: 'Snow',
@@ -64,7 +67,7 @@ export class UserProfile extends Component {
         {
             id: 'password',
             name: 'password',
-            label: 'Password',
+            label: 'New Password',
             type: 'password',
             placeholder: '********',
             component: TextInput
@@ -72,17 +75,40 @@ export class UserProfile extends Component {
         {
             id: 'passwordConfirm',
             name: 'passwordConfirm',
-            label: 'Confirm Password',
+            label: 'Confirm New Password',
             type: 'password',
             placeholder: '********',
             component: TextInput
         },
     ];
+
     componentDidMount() {
+        this.props.loadProjects();
+        this.props.loadUsers();
         this.props.loadUser();
     };
 
+    getUser = id => {
+        return this.props.users[id];
+    };
+
+    getProject = id => {
+        return this.props.projects[id];
+    };
+
     onOpenModal = () => {
+        const userData = this.props.user;
+        for (let i = 0; i < UserProfile.formSpec.length; i++) {
+            Object.keys(UserProfile.formSpec[i]).forEach(function (fKey) {
+                if (fKey === 'name') {
+                    Object.keys(userData).forEach(function (pKey) {
+                        if (pKey === UserProfile.formSpec[i][fKey] && pKey !== 'password') {
+                            UserProfile.formSpec[i]['defaultValue'] = userData[pKey];
+                        }
+                    });
+                }
+            });
+        }
         this.setState({open: true});
     };
 
@@ -91,8 +117,13 @@ export class UserProfile extends Component {
     };
 
     handleFormSubmit = formProps => {
-        const {user} = this.props;
-        this.props.updateUser(user.id, formProps);
+        const userData = this.props.user;
+        const id = userData.id;
+        delete userData.id;
+        formProps.invitations = userData.invitations;
+        formProps.avatar = userData.avatar;
+        this.props.updateUser(id, formProps);
+        this.props.resetPassword(formProps, UserProfile.propTypes.params.token);
     };
 
     uploadImage = () => {
@@ -111,6 +142,7 @@ export class UserProfile extends Component {
         userData.avatar = 'http://localhost:3000/' + userData.id + '.' + fileExtension;
         delete userData.id;
         this.props.updateUser(id, userData);
+        location.reload();
     };
 
     deleteProfile = () => {
@@ -125,23 +157,68 @@ export class UserProfile extends Component {
         if (!this.props.user) {
             return null;
         } else {
+            UserProfile.propTypes.params.token = getCookie('token');
+            const $this = this;
             const user = this.props.user;
-            const isCurrUser = window.location.href.split('/')[4] === this.props.user.id;
-            const divStyle = {
-                width: '70px',
-                height: '70px',
-            };
+            const projects = this.props.projects;
+            const isOwnProfile = window.location.href.split('/')[4] === user.id;
+            const state = ['Offen', 'In Arbeit', 'To Review', 'In Review', 'Freigabe', 'Geschlossen'];
+            const category = ['Keine Kategorie', 'Story', 'FE-Task', 'BE-Task'];
+            const priority = ['Keine Priorität', 'Low', 'Medium', 'High', 'Blocker'];
+
+            function getUserProjects() {
+                const arr = [];
+                Object.keys(projects).forEach(function (key) {
+                    if (projects[key].users.includes(user.id)) {
+                        arr.push(key);
+                    }
+                });
+                return arr;
+            }
+
+            const userProjects = getUserProjects();
             return (
                 <div>
-                    <img src={user.avatar} className="user-avatar" style={divStyle} />
-                    <p>{user.firstName} {user.lastName}</p>
-                    {isCurrUser ? <button onClick={() => this.deleteProfile} className="button is-primary">Delete Profile</button> : ''}
-                    {isCurrUser ? <button onClick={this.onOpenModal}>Update Profile</button>: ''}
+                    <div className="user__container">
+                        <div className="user__header">
+                            <h2>{user.firstName} {user.lastName}</h2>
+                            {isOwnProfile ?
+                                <button onClick={this.deleteProfile}
+                                        className="button is-primary">Account löschen</button> : ''}
+                            {isOwnProfile ?
+                                <button onClick={this.onOpenModal} className="button is-primary">Update
+                                    Account</button> : ''}
+                        </div>
+                        <div className="user__avatar-container">
+                            <img src={user.avatar} className="user-avatar--large"/>
+                            <input type="file" name="file" id="fileUpload" onChange={this.uploadImage}/>
+                        </div>
+                        <div className="user__info-container">
+                            <div className="user__info">
+                                <label>Projekte:</label>
+                                <hr></hr>
+                                <ul>
+                                    {_.map(_.range(userProjects.length), function (i) {
+                                        const project = $this.getProject(userProjects[i]);
+                                        return <li>
+                                            <p>{project.name}</p>
+                                            <p className="user__tickets-headline">Tickets im Projekt:</p>
+                                            <ul className="user__tickets-sublist">
+                                                {_.map(_.range(project.tickets.length), function (i) {
+                                                    return <li>
+                                                        <p>{project.tickets[i].user === user.id ?
+                                                            <span>{project.tickets[i].name} | {category[parseInt(project.tickets[i].category)]} | {priority[parseInt(project.tickets[i].priority)]} | {state[parseInt(project.tickets[i].state)]} | {project.tickets[i].estimation} h</span> : ''}</p>
+                                                    </li>
+                                                })}
+                                            </ul>
+                                        </li>
+                                    })}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <Modal open={open} onClose={this.onCloseModal} little>
-                        <h2>Update User</h2>
-                        <label>Avatar</label>
-                        <input type="file" name="file" id="fileUpload" onChange={this.uploadImage}/>
-                        <label>Informationen</label>
+                        <h2>Update Account</h2>
                         <GenericForm
                             onSubmit={handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
@@ -156,19 +233,24 @@ export class UserProfile extends Component {
     }
 }
 
-//
-const mapStateToProps = ({user, authentication}) => {
+const mapStateToProps = (state) => {
     return {
-        user: user.user,
-        currUser: getAuthenticatedUser({user, authentication}),
-        /*errors: state.project.errors[EDIT_PROJECT],
-        message: state.project.messages[EDIT_PROJECT],
-        loading: state.project.loading[EDIT_PROJECT],*/
+        user: state.user.user,
+        users: state.user.users,
+        projects: state.project.projects,
+        authenticated: state.authentication.authenticated,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
+    //
     return {
+        loadProjects: () => {
+            dispatch(getProjects());
+        },
+        loadUsers: () => {
+            dispatch(getUsers());
+        },
         loadUser: () => {
             dispatch(getUser(window.location.href.split('/')[4].split('-')[0]));
         },
@@ -180,6 +262,9 @@ const mapDispatchToProps = (dispatch) => {
         },
         uploadAvatar: (formData) => {
             dispatch(postAvatar(formData));
+        },
+        resetPassword: (formData, token) => {
+            dispatch(resetPassword(formData, token));
         },
     };
 };

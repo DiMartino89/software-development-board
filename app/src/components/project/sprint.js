@@ -140,6 +140,7 @@ export class SingleSprint extends Component {
             label: 'Startdatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
         {
@@ -148,6 +149,7 @@ export class SingleSprint extends Component {
             label: 'Enddatum',
             type: 'date',
             placeholder: 'xx.xx.xxxx',
+            minValue: Moment(new Date()).format('YYYY-MM-DD'),
             component: TextInput
         },
     ];
@@ -509,16 +511,16 @@ export class SingleSprint extends Component {
 
                                 />
                                 <hr></hr>
-                                <div>Today: {Moment(Date.now()).format('DD.MM.YYYY')}</div>
+                                <div>Heute: {Moment(Date.now()).format('DD.MM.YYYY')}</div>
                                 <div>Start: {Moment(sprint.begin).format('DD.MM.YYYY')}</div>
-                                <div>End: {Moment(sprint.end).format('DD.MM.YYYY')}</div>
-                                <div>Left: {Moment(timeLeft).format('DD')} Day(s)</div>
+                                <div>Ende: {Moment(sprint.end).format('DD.MM.YYYY')}</div>
+                                <div>Verbleibend: {Moment(timeLeft).format('DD')} Tag(e)</div>
                             </div>
                         </div>
                         <div className="sprint__tickets">
-                            <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
+                            <button onClick={this.onOpenModal} className="button is-primary">Ticket erstellen</button>
                             <a href={"/project/" + project.id} className="inline">
-                                <button className="button is-primary">Zum Project</button>
+                                <button className="button is-primary">Zum Projekt</button>
                             </a>
                         </div>
                     </div>
@@ -543,7 +545,7 @@ export class SingleSprint extends Component {
                             //errors={errors}
                             //message={message}
                             formSpec={SingleSprint.formSpec}
-                            submitText="Create"
+                            submitText="Erstellen"
                         />
                     </Modal>
                     <Modal open={open2} onClose={this.onCloseModal2} id="sprint-update" little>

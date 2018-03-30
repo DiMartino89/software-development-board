@@ -35,8 +35,10 @@ export class SingleTicket extends Component {
 
         this.state = {
             open: false,
+            open2: false,
             currentTicket: null,
             progress: 0,
+            image: '',
         };
     }
 
@@ -120,6 +122,8 @@ export class SingleTicket extends Component {
             label: 'Zeit protokollieren',
             type: 'number',
             placeholder: 'x.x',
+            minValue: 0.25,
+            stepValue: 0.25,
             component: TextInput
         },
     ];
@@ -177,6 +181,15 @@ export class SingleTicket extends Component {
 
     onCloseModal = () => {
         this.setState({open: false});
+    };
+
+    onOpenImageModal = (path) => {
+        this.setState({image: path});
+        this.setState({open2: true});
+    };
+
+    onCloseImageModal = () => {
+        this.setState({open2: false});
     };
 
     handleFormSubmit = formProps => {
@@ -314,6 +327,7 @@ export class SingleTicket extends Component {
     render = () => {
         const {handleSubmit, errors, message} = this.props;
         const {open} = this.state;
+        const {open2} = this.state;
 
         if (!this.props.project && !this.props.user) {
             return null;
@@ -340,6 +354,7 @@ export class SingleTicket extends Component {
             this.state.progress = ((logging * 100) / parseFloat(ticket.estimation)) / 100;
             const Line = ProgressBar.Line;
             const options = this.createOptions();
+
             function getCurrOption(idKey, arr) {
                 for (let i = 0; i < options.length; i++) {
                     if (options[i].id === idKey) {
@@ -360,7 +375,7 @@ export class SingleTicket extends Component {
                                 <button onClick={() => this.deleteTicket(ticket.id)}
                                         className="button is-primary">Delete
                                     Ticket</button> : ''}
-                            <button onClick={() => this.onOpenModal} className="button is-primary">Update
+                            <button onClick={this.onOpenModal} className="button is-primary">Update
                                 Ticket
                             </button>
                         </div>
@@ -372,7 +387,7 @@ export class SingleTicket extends Component {
                                 <label>Beschreibung:</label>
                                 <hr></hr>
                                 <p>{ticket.description}</p>
-                                <label>Time Management:</label>
+                                <label>Zeitmanagement:</label>
                                 <hr></hr>
                                 <p>Schätzung: {ticket.estimation} h</p>
                                 <p>Protokolliert: {logging} h</p>
@@ -389,7 +404,7 @@ export class SingleTicket extends Component {
                                         height: '20px'
                                     }}
                                     containerClassName={'.progressbar'}/>
-                                <p>{this.state.progress} %</p>
+                                <p>{this.state.progress * 100} %</p>
                                 <ul>
                                     {_.map(_.range(ticket.logging.length), function (i) {
                                         const user = $this.getUser(ticket.logging[i].user);
@@ -399,28 +414,28 @@ export class SingleTicket extends Component {
                                     })}
                                 </ul>
                                 <GenericForm
-                                    onSubmit={() => handleSubmit(this.handleFormSubmit3)}
+                                    onSubmit={handleSubmit(this.handleFormSubmit3)}
                                     //errors={errors}
                                     //message={message}
                                     formSpec={SingleTicket.formSpec3}
                                     submitText="Protokollieren"
                                 />
-                                <label>Files:</label>
+                                <label>Dateien:</label>
                                 <hr></hr>
                                 <ul className="files__list">
                                     {_.map(_.range(ticket.files.length), function (i) {
                                         return <li className="file__item">
-                                            <img src={ticket.files[i].file}/>
+                                            <img src={ticket.files[i].file} onClick={() => $this.onOpenImageModal(ticket.files[i].file)}/>
                                             <span>{ticket.files[i].uploadedAt}</span>
                                         </li>
                                     })}
                                 </ul>
                                 <div className="uploadzone" onDrop={(e) => $this.handleDrop(e)}
-                                     onClick={() => $this.chooseFile}>
+                                     onClick={$this.chooseFile}>
                                     <input type="file" id="imgupload" onChange={(e) => $this.handleDrop(e)}/>
                                     Drop files here or click to choose
                                 </div>
-                                <label>Comments:</label>
+                                <label>Kommentare:</label>
                                 <hr></hr>
                                 <ul>
                                     {_.map(_.range(ticket.comments.length), function (i) {
@@ -429,7 +444,7 @@ export class SingleTicket extends Component {
                                             return <li>
                                                 <p>{author.firstName} {author.lastName} | {ticket.comments[i].updatedAt}</p>
                                                 <form className={"form " + "comment__form"}
-                                                      onSubmit={() => handleSubmit($this.handleFormSubmit2)}
+                                                      onSubmit={handleSubmit($this.handleFormSubmit2)}
                                                       onMouseEnter={() => $this.showSubmit(ticket.comments[i].id)}
                                                       onMouseLeave={() => $this.hideSubmit(ticket.comments[i].id)}
                                                 >
@@ -458,7 +473,7 @@ export class SingleTicket extends Component {
                                     })}
                                 </ul>
                                 <GenericForm
-                                    onSubmit={() => handleSubmit(this.handleFormSubmit2)}
+                                    onSubmit={handleSubmit(this.handleFormSubmit2)}
                                     //errors={errors}
                                     //message={message}
                                     formSpec={SingleTicket.formSpec2}
@@ -480,7 +495,7 @@ export class SingleTicket extends Component {
                                     onChange={(e) => $this.onUserChange(ticket.id, e)}
                                     searchable={true}
                                 />
-                                <label>Priority:</label>
+                                <label>Priorität:</label>
                                 <hr></hr>
                                 <p>{ticket.priority === "1" ? <span><i className="material-icons p-1"
                                                                        title="Low">arrow_downward</i> {priority[ticket.priority]}</span> : ''}</p>
@@ -490,7 +505,7 @@ export class SingleTicket extends Component {
                                                                        title="High">priority_high</i> {priority[ticket.priority]}</span> : ''}</p>
                                 <p>{ticket.priority === "4" ? <span><i className="material-icons p-4"
                                                                        title="Blocker">do_not_disturb_alt</i> {priority[ticket.priority]}</span> : ''}</p>
-                                <label>Category:</label>
+                                <label>Kategorie:</label>
                                 <hr></hr>
                                 <p>{ticket.category === "1" ? <span><i className="material-icons"
                                                                        title="Story">speaker_notes</i> {category[parseInt(ticket.category)]}</span> : ''}</p>
@@ -507,12 +522,15 @@ export class SingleTicket extends Component {
                     <Modal open={open} onClose={this.onCloseModal} little>
                         <h2>Update Ticket</h2>
                         <GenericForm
-                            onSubmit={() => handleSubmit(this.handleFormSubmit)}
+                            onSubmit={handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleTicket.formSpec}
                             submitText="Update"
                         />
+                    </Modal>
+                    <Modal open={open2} onClose={this.onCloseImageModal} classNames={{'modal': 'image-modal'}} little>
+                        <img src={this.state.image} />
                     </Modal>
                 </div>
             );

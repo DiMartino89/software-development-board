@@ -25,7 +25,7 @@ class Register extends Component {
     static formSpec = [
         {
             id: 'firstName',
-            name: 'name.first',
+            name: 'firstName',
             label: 'First Name',
             type: 'text',
             placeholder: 'First Name',
@@ -33,7 +33,7 @@ class Register extends Component {
         },
         {
             id: 'lastName',
-            name: 'name.last',
+            name: 'lastName',
             label: 'Last Name',
             type: 'text',
             placeholder: 'Last Name',

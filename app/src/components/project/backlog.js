@@ -282,8 +282,7 @@ export class Backlog extends Component {
                                 <p className="ticket__user-label">Bearbeiter:</p>
                                 <img
                                     src={Object.keys(user).length !== 0 ? user.avatar : apiUrl + 'default.png'}
-                                    className="ticket__user-image"
-                                    style={divStyle}
+                                    className="user-avatar"
                                     title={Object.keys(user).length !== 0 ? user.firstName + ' ' + user.lastName : 'Kein Bearbeiter'}
                                 />
                             </div>
@@ -343,7 +342,7 @@ export class Backlog extends Component {
                 <div className="backlog">
                     <div className="col-lg-12">
                         <h2>{project.name}</h2>
-                        <button onClick={() => this.onOpenModal} className="button is-primary">Create Ticket</button>
+                        <button onClick={this.onOpenModal} className="button is-primary">Ticket erstellen</button>
                     </div>
                     <div className="backlog__head" style={layoutStyle}>
                         <div className="backlog__col" style={colStyle}>Offen</div>
@@ -359,14 +358,14 @@ export class Backlog extends Component {
                     >
                         {this.generateDOM()}
                     </ReactGridLayout>
-                    <Modal open={open} onClose={() => this.onCloseModal} little>
+                    <Modal open={open} onClose={this.onCloseModal} little>
                         <h2>Create Ticket</h2>
                         <GenericForm
                             onSubmit={() => handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
                             formSpec={Backlog.formSpec}
-                            submitText="Create"
+                            submitText="Erstellen"
                         />
                     </Modal>
                 </div>

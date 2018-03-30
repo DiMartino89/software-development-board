@@ -7,7 +7,6 @@ import ResetPassword from '../components/authentication/reset-password';
 import RequireAuth from '../components/hoc/require-auth';
 import AuthenticatedRoutes from './authenticated/index';
 import CreateProject from '../components/project/create';
-import GetProjects from '../components/project/getAll';
 import Backlog from '../components/project/backlog';
 import SingleProject from "../components/project/project";
 import SingleTicket from "../components/project/ticket";
@@ -23,7 +22,6 @@ const TopLevelRoutes = () => (
         <Route path="/dashboard" component={RequireAuth(AuthenticatedRoutes)}/>
         <Route path="/user/:id" component={RequireAuth(UserProfile)}/>
         <Route path="/project/create" component={RequireAuth(CreateProject)}/>
-        <Route path="/projects" component={RequireAuth(GetProjects)}/>
         <Route path="/backlog/:id" component={RequireAuth(Backlog)}/>
         <Route path="/project/:id" component={RequireAuth(SingleProject)}/>
         <Route path="/sprint/:id" component={RequireAuth(SingleSprint)}/>
