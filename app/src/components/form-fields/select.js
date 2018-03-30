@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { fieldPropTypes } from '../../util/proptype-utils';
 
-const StandardSelect = ({ input, children, meta, id, placeholder, label = '', extraClasses = '' }) => {
+const StandardSelect = ({ input, children, meta, id, placeholder, defaultValue, label = '', extraClasses = '' }) => {
     return (
         <label htmlFor={id} className="form-label">
             {label}
@@ -11,6 +11,7 @@ const StandardSelect = ({ input, children, meta, id, placeholder, label = '', ex
                 {...input}
                 className={`form-control ${extraClasses && extraClasses}`}
                 placeholder={placeholder}
+                value={defaultValue}
                 id={id}
             >
                 {_.map(_.range(children.length), function (i) {

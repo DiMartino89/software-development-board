@@ -539,7 +539,7 @@ export class SingleProject extends Component {
                                 <p className="ticket__user-label">Bearbeiter:</p>
                                 <img
                                     src={Object.keys(user).length !== 0 ? user.avatar : apiUrl + 'default.png'}
-                                    className="ticket__user-image"
+                                    className="user-avatar"
                                     title={Object.keys(user).length !== 0 ? user.firstName + ' ' + user.lastName : 'Kein Bearbeiter'}
                                 />
                             </div>
@@ -605,6 +605,7 @@ export class SingleProject extends Component {
             } else {
                 timeLeft = Date.parse(project.end) - Date.parse(project.begin);
             }
+            //
             return (
                 <div>
                     <div className="project__container">
@@ -616,7 +617,7 @@ export class SingleProject extends Component {
                                 <button onClick={() => this.deleteProject} className="button is-primary">Delete
                                     Project</button> : ''}
                             {isProjectOwner ?
-                                <button onClick={this.onOpenModal3} className="button is-primary">Update
+                                <button onClick={() => this.onOpenModal3} className="button is-primary">Update
                                     Project</button> : ''}
                         </div>
                         <div className="project__action">
@@ -630,7 +631,7 @@ export class SingleProject extends Component {
                                 searchable={true}
                             />
                             {isProjectOwner ?
-                                <button onClick={this.onOpenModal2} className="button is-primary">Create
+                                <button onClick={() => this.onOpenModal2} className="button is-primary">Create
                                     Sprint</button> : ''}
                         </div>
                         <div className="project__info-container">
@@ -687,12 +688,12 @@ export class SingleProject extends Component {
                                             </li>
                                         })}
                                     </ul>
-                                    <button onClick={this.inviteUsers} className="button is-primary">Einladen</button>
+                                    <button onClick={() => this.inviteUsers} className="button is-primary">Einladen</button>
                                 </div>
                             </div>
                         </div>
                         <div className="project__tickets">
-                            <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
+                            <button onClick={() => this.onOpenModal} className="button is-primary">Create Ticket</button>
                             <a href={"/backlog/" + id} className="inline">
                                 <button className="button is-primary">Zum Backlog</button>
                             </a>
@@ -707,15 +708,15 @@ export class SingleProject extends Component {
                     <ReactGridLayout
                         layout={this.state.layout}
                         {...this.props}
-                        onLayoutChange={this.onLayoutChange}
-                        onDragStop={this.onDragStop}
+                        onLayoutChange={() => this.onLayoutChange}
+                        onDragStop={() => this.onDragStop}
                     >
                         {this.generateDOM()}
                     </ReactGridLayout>
-                    <Modal open={open} onClose={this.onCloseModal} id="ticket-create" little>
+                    <Modal open={open} onClose={() => this.onCloseModal} id="ticket-create" little>
                         <h2>Create Ticket</h2>
                         <GenericForm
-                            onSubmit={handleSubmit(this.handleFormSubmit)}
+                            onSubmit={() => handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleProject.formSpec}
@@ -725,7 +726,7 @@ export class SingleProject extends Component {
                     <Modal open={open2} onClose={this.onCloseModal2} id="sprint-create" little>
                         <h2>Create Sprint</h2>
                         <GenericForm
-                            onSubmit={handleSubmit(this.handleFormSubmit2)}
+                            onSubmit={() => handleSubmit(this.handleFormSubmit2)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleProject.formSpec2}
@@ -735,7 +736,7 @@ export class SingleProject extends Component {
                     <Modal open={open3} onClose={this.onCloseModal3} id="project-update" little>
                         <h2>Create Project</h2>
                         <GenericForm
-                            onSubmit={handleSubmit(this.handleFormSubmit3)}
+                            onSubmit={() => handleSubmit(this.handleFormSubmit3)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleProject.formSpec3}

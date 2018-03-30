@@ -1,0 +1,109 @@
+// Single ticket
+.ticket__container {
+  display: block;
+  height: auto;
+  margin: 0 auto 20px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.ticket__header {
+
+  h2 {
+    display: inline-block;
+    float: left;
+    width: 50%;
+  }
+
+  .is-open {
+    display: inline-block;
+    width: 15%;
+    float: right;
+    color: rgba(120, 120, 120, 0.7);
+    font-size: 20px;
+    padding: 5px;
+    border: 1px solid rgba(120, 120, 120, 0.7);
+    margin: 0 2px;
+    text-align: center;
+  }
+
+  .is-active {
+    display: inline-block;
+    width: 15%;
+    float: right;
+    color: rgba(0, 173, 14, 0.7);
+    font-size: 20px;
+    padding: 5px;
+    border: 1px solid rgba(0, 173, 14, 0.7);
+    margin: 0 2px;
+    text-align: center;
+  }
+
+  .not-active {
+    display: inline-block;
+    width: 15%;
+    float: right;
+    color: rgba(255,48,68,0.7);
+    font-size: 20px;
+    padding: 5px;
+    border: 1px solid rgba(255,48,68,0.7);
+    margin: 0 2px;
+    text-align: center;
+  }
+
+  button {
+    display: inline-block;
+    margin: 6px 0;
+    width: 15%;
+    float: right;
+  }
+}
+
+.ticket__info-1 {
+  background: rgba(180,180,180,0.7);
+  display: inline-block;
+  margin: 0 2px;
+  padding: 10px;
+  width: calc(70% - 4px);
+  height: auto;
+  min-height: 250px;
+  float: left;
+
+  &-container {
+    display: table;
+    width: 100%;
+    margin: 0 0 4px;
+  }
+
+  .log__item {
+
+  }
+}
+
+.ticket__info-2 {
+  background: rgba(180, 180, 180, 0.7);
+  display: inline-block;
+  margin: 0 2px;
+  padding: 10px;
+  width: calc(30% - 4px);
+  height: auto;
+  min-height: 250px;
+  float: right;
+
+  .material-icons {
+    padding: 5px !important;
+
+    &.p-1 {
+      color: rgba(0, 173, 14, 1);
+    }
+
+    &.p-2 {
+      color: rgba(221,198,58, 1);
+    }
+
+    &.p-3,
+    &.p-4 {
+      color: rgba(255,48,68, 1);
+    }
+  }
+}

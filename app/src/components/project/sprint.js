@@ -399,7 +399,7 @@ export class SingleSprint extends Component {
                             <p className="ticket__user-label">Bearbeiter:</p>
                             <img
                                 src={Object.keys(user).length !== 0 ? user.avatar : apiUrl + 'default.png'}
-                                className="ticket__user-image"
+                                className="user-avatar"
                                 title={Object.keys(user).length !== 0 ? user.firstName + ' ' + user.lastName : 'Kein Bearbeiter'}
                             />
                         </div>

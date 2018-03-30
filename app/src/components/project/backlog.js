@@ -14,7 +14,6 @@ import {getProject, editProject} from '../../redux/modules/project';
 import {editUser, getUsers} from '../../redux/modules/user';
 import Modal from 'react-responsive-modal';
 import Moment from 'moment';
-import FontAwesome from 'react-fontawesome';
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -241,10 +240,6 @@ export class Backlog extends Component {
             const tickets = this.props.project.tickets;
             const prefix = this.props.project.prefix;
             const currProject = window.location.href.split('/')[4];
-            const divStyle = {
-                width: '30px',
-                height: '30px',
-            };
             const apiUrl = "http://localhost:3000/";
             const $this = this;
 
@@ -268,6 +263,20 @@ export class Backlog extends Component {
                                 <Link className="ticket__link" to={"/ticket/" + currProject + "-" + i}>
                                     <p className="ticket__name">{prefix + '-' + tickets[i].id}</p>
                                 </Link>
+                                <div className="ticket__category">
+                                    {tickets[i].category === "1" ? <i className="material-icons" title="Story">speaker_notes</i> : ''}
+                                    {tickets[i].category === "2" ? <i className="material-icons" title="FE-Task">web</i> : ''}
+                                    {tickets[i].category === "3" ? <i className="material-icons" title="BE-Task">developer_board</i> : ''}
+                                </div>
+                                <div className="ticket__priority">
+                                    {tickets[i].priority === "1" ? <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
+                                    {tickets[i].priority === "2" ? <i className="material-icons p-2" title="Medium">radio_button_unchecked</i> : ''}
+                                    {tickets[i].priority === "3" ? <i className="material-icons p-3" title="High">priority_high</i> : ''}
+                                    {tickets[i].priority === "4" ? <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
+                                </div>
+                            </div>
+                            <div className="ticket__row">
+                                <p className="ticket__name">{tickets[i].name}</p>
                             </div>
                             <div className="ticket__row">
                                 <p className="ticket__user-label">Bearbeiter:</p>
@@ -305,7 +314,7 @@ export class Backlog extends Component {
                         x: item.sprint !== "" ? (item.sprint + 1) : 0,
                         y: i,
                         w: 1,
-                        h: 3,
+                        h: 4,
                         i: i.toString(),
                     };
                 });
@@ -334,7 +343,7 @@ export class Backlog extends Component {
                 <div className="backlog">
                     <div className="col-lg-12">
                         <h2>{project.name}</h2>
-                        <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
+                        <button onClick={() => this.onOpenModal} className="button is-primary">Create Ticket</button>
                     </div>
                     <div className="backlog__head" style={layoutStyle}>
                         <div className="backlog__col" style={colStyle}>Offen</div>
@@ -350,10 +359,10 @@ export class Backlog extends Component {
                     >
                         {this.generateDOM()}
                     </ReactGridLayout>
-                    <Modal open={open} onClose={this.onCloseModal} little>
+                    <Modal open={open} onClose={() => this.onCloseModal} little>
                         <h2>Create Ticket</h2>
                         <GenericForm
-                            onSubmit={handleSubmit(this.handleFormSubmit)}
+                            onSubmit={() => handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
                             formSpec={Backlog.formSpec}

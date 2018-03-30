@@ -175,9 +175,12 @@
   }
 }
 
-.ticket__user-image {
-  width: 30px !important;
-  height: 30px;
+.react-grid-item:hover {
+  z-index: 1 !important;
+}
+
+.react-grid-item {
+  z-index: 0 !important;
 }
 
 //Calendar Stuff

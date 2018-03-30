@@ -81,7 +81,7 @@ class CreateProject extends Component {
             <div className={`creation__container ${loading ? 'is-loading' : ''}`}>
                 <h2>Create Project</h2>
                 <GenericForm
-                    onSubmit={handleSubmit(this.handleFormSubmit)}
+                    onSubmit={() => handleSubmit(this.handleFormSubmit)}
                     //errors={errors}
                     //message={message}
                     formSpec={CreateProject.formSpec}

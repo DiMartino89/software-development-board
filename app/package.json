@@ -57,6 +57,7 @@
     "react-grid-layout": "^0.16.5",
     "react-grid-layout-rrmod": "^0.8.5-beta1",
     "react-images-uploader": "^1.1.0",
+    "react-progressbar.js": "^0.2.0",
     "react-redux": "^5.0.5",
     "react-resizable": "1.x",
     "react-responsive-modal": "^2.0.1",

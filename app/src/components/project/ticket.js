@@ -3,15 +3,16 @@ import {connect} from "react-redux";
 import TextInput from "../form-fields/text-input";
 import PropTypes from "prop-types";
 import {reduxForm} from 'redux-form';
-import {Link} from 'react-router-dom';
 import GenericForm from '../form-fields/generic-form';
 import {getProject, editProject} from '../../redux/modules/project';
 import Modal from 'react-responsive-modal';
+import Select from 'react-select';
 import 'react-responsive-modal/lib/react-responsive-modal.css';
 import Textarea from "../form-fields/text-area";
 import StandardSelect from "../form-fields/select";
 import {editUser, getUsers} from "../../redux/modules/user";
 import Moment from "moment/moment";
+import ProgressBar from 'react-progressbar.js';
 
 const form = reduxForm({
     form: 'updateTicket',
@@ -35,6 +36,7 @@ export class SingleTicket extends Component {
         this.state = {
             open: false,
             currentTicket: null,
+            progress: 0,
         };
     }
 
@@ -122,6 +124,27 @@ export class SingleTicket extends Component {
         },
     ];
 
+    createOptions() {
+        if (!this.props.project) {
+            return null;
+        } else {
+            const options = [];
+            for (let i = 0; i < this.props.project.users.length; i++) {
+                const user = this.getUser(this.props.project.users[i]);
+                const option = {
+                    value: i + 1,
+                    label: user.firstName + ' ' + user.lastName,
+                    id: user.id,
+                    className: 'user-option'
+                };
+                options.push(option);
+            }
+            const defaultOption = {value: 0, label: 'Kein Bearbeiter', className: 'user-option'};
+            options.unshift(defaultOption);
+            return options;
+        }
+    };
+
     componentDidMount() {
         this.props.loadProject();
         this.props.loadUsers();
@@ -132,12 +155,24 @@ export class SingleTicket extends Component {
     };
 
     onOpenModal = () => {
+        const projectData = this.props.project;
+        const ticketId = window.location.href.split('/')[4].split('-')[1];
+        for (let i = 0; i < SingleTicket.formSpec.length; i++) {
+            Object.keys(SingleTicket.formSpec[i]).forEach(function (fKey) {
+                if (fKey === 'name') {
+                    Object.keys(projectData.tickets[ticketId]).forEach(function (pKey) {
+                        if (pKey === SingleTicket.formSpec[i][fKey]) {
+                            if (pKey === 'category' || pKey === 'priority') {
+                                SingleTicket.formSpec[i]['defaultValue'] = parseInt(projectData.tickets[ticketId][pKey]);
+                            } else {
+                                SingleTicket.formSpec[i]['defaultValue'] = projectData.tickets[ticketId][pKey];
+                            }
+                        }
+                    });
+                }
+            });
+        }
         this.setState({open: true});
-        setTimeout(function () {
-            const ticket = this.props.project.tickets[window.location.href.split('/')[4].split('-')[1]];
-            document.getElementById('state').childNodes[ticket.state].selected = true;
-            document.getElementById('category').childNodes[ticket.category].selected = true;
-        }, 2000);
     };
 
     onCloseModal = () => {
@@ -204,6 +239,35 @@ export class SingleTicket extends Component {
         this.setState({currentTicket: null});
     };
 
+    onUserChange = (tId, obj) => {
+        const projectData = this.props.project;
+
+        // Setup Data for old User
+        const oldUserData = projectData.tickets[tId].user;
+        if (Object.keys(oldUserData).length !== 0) {
+            const oldUserId = oldUserData.id;
+            for (let i = 0; i < oldUserData.tickets.length; i++) {
+                if (oldUserData.tickets[i].project === this.props.project.id && oldUserData.tickets[i].ticket === tId) {
+                    oldUserData.tickets.splice(i, 1);
+                }
+            }
+            this.props.updateUser(oldUserId, oldUserData);
+        }
+
+        // Setup Data for new User
+        const newUserData = this.props.project.users[obj.value - 1];
+        const newUserId = newUserData.id;
+        const ticket = {project: this.props.project.id, ticket: tId};
+        newUserData.tickets.push(ticket);
+        this.props.updateUser(newUserId, newUserData);
+
+        // Setup Data for Ticket
+        const id = window.location.href.split('/')[4];
+        delete projectData.id;
+        projectData.tickets[tId].user = obj.value === 0 ? {} : this.props.project.users[obj.value - 1];
+        this.props.updateTicket(id, projectData);
+    };
+
     onTextChange = (val, id) => {
         document.getElementById(id).value = val;
     };
@@ -212,13 +276,12 @@ export class SingleTicket extends Component {
         document.getElementById('imgupload').click();
     };
 
-    deleteTicket = () => {
+    deleteTicket = (id) => {
         const projectData = this.props.project;
-        const projectIid = projectData.id;
-        const ticketId = window.location.href.split('/')[4].split('-')[1];
+        const projectId = projectData.id;
         delete projectData.id;
-        projectData.tickets.splice(ticketId, 1);
-        this.props.deleteTicket(projectIid, projectData);
+        projectData.tickets.splice(id, 1);
+        this.props.deleteTicket(projectId, projectData);
     };
 
     handleDrop = (event) => {
@@ -257,111 +320,194 @@ export class SingleTicket extends Component {
         } else {
             const project = this.props.project;
             const ticket = this.props.project.tickets[window.location.href.split('/')[4].split('-')[1]];
-            const user = this.getUser(ticket.user);
-            const isProjectOwner = this.props.project.users[0] === this.props.user.id;
+            let user = {};
+            if (ticket.user !== '') {
+                user = this.getUser(ticket.user);
+            }
+            const originUser = this.getUser(ticket.originUser);
             const isTicketOwner = ticket.originUser === this.props.user.id;
+            const isOpen = ticket.state === 0;
+            const isActive = ticket.state > 0 && ticket.state < 5;
+            const isClosed = ticket.state === 5;
             const $this = this;
             const state = ['Offen', 'In Arbeit', 'To Review', 'In Review', 'Freigabe', 'Geschlossen'];
             const category = ['Keine Kategorie', 'Story', 'FE-Task', 'BE-Task'];
             const priority = ['Keine Priorität', 'Low', 'Medium', 'High', 'Blocker'];
-            const divStyle = {
-                width: '30px',
-                height: '30px',
-            };
-
             let logging = 0.0;
-            for(let i=0; i < ticket.logging.length; i++) {
+            for (let i = 0; i < ticket.logging.length; i++) {
                 logging += parseFloat(ticket.logging[i].time);
             }
+            this.state.progress = ((logging * 100) / parseFloat(ticket.estimation)) / 100;
+            const Line = ProgressBar.Line;
+            const options = this.createOptions();
+            function getCurrOption(idKey, arr) {
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].id === idKey) {
+                        return i;
+                    }
+                }
+            }
+
             return (
                 <div>
-                    <p>Projekt: {project.name}</p>
-                    <p>{project.prefix}-{ticket.id}</p>
-                    <p>Name: {ticket.name}</p>
-                    <p>Beschreibung: {ticket.description}</p>
-                    <p>Status: {state[ticket.state]}</p>
-                    <p>Kategorie: {category[ticket.category]}</p>
-                    <p>Priorität: {priority[ticket.priority]}</p>
-                    <p>Schätzung: {ticket.estimation} h</p>
-                    <p>Protokollierung: {logging} h</p>
-                    <p>Sprint: {ticket.sprint}</p>
-                    <p>Bearbeiter: {user.firstName} {user.lastName}</p>
-                    <img src={user.avatar} style={divStyle}/>
-                    <button onClick={this.onOpenModal} className="button is-primary">Update Ticket</button>
-                    {isProjectOwner || isTicketOwner ? <button onClick={() => this.deleteTicket} className="button is-primary">Delete Ticket</button> : ''}
-                    <h2>Arbeit Protokollieren:</h2>
-                    {_.map(_.range(ticket.logging.length), function (i) {
-                        const user = $this.getUser(ticket.logging[i].user);
-                        return <li className="log__item">
-                            <p>{ticket.logging[i].date}: {user.firstName} {user.lastName} - {ticket.logging[i].time} h</p>
-                        </li>
-                    })}
-                    <GenericForm
-                        onSubmit={handleSubmit(this.handleFormSubmit3)}
-                        //errors={errors}
-                        //message={message}
-                        formSpec={SingleTicket.formSpec3}
-                        submitText="Protokollieren"
-                    />
-                    <h2>Files:</h2>
-                    <ul className="files__list">
-                        {_.map(_.range(ticket.files.length), function (i) {
-                            return <li className="file__item">
-                                <img src={ticket.files[i].file}/>
-                                <span>{ticket.files[i].uploadedAt}</span>
-                            </li>
-                        })}
-                    </ul>
-                    <div className="uploadzone" onDrop={(e) => $this.handleDrop(e)} onClick={$this.chooseFile}>
-                        <input type="file" id="imgupload" onChange={(e) => $this.handleDrop(e)}/>
-                        Drop files here or click to choose
+                    <div className="ticket__container">
+                        <div className="ticket__header">
+                            <h2>{project.name} | {project.prefix}-{ticket.id}</h2>
+                            {isOpen ? <span className="is-open">{state[ticket.state]}</span> : ''}
+                            {isActive ? <span className="is-active">{state[ticket.state]}</span> : ''}
+                            {isClosed ? <span className="not-active">{state[ticket.state]}</span> : ''}
+                            {isTicketOwner ?
+                                <button onClick={() => this.deleteTicket(ticket.id)}
+                                        className="button is-primary">Delete
+                                    Ticket</button> : ''}
+                            <button onClick={() => this.onOpenModal} className="button is-primary">Update
+                                Ticket
+                            </button>
+                        </div>
+                        <div className="ticket__info-container">
+                            <div className="ticket__info-1">
+                                <label>Name:</label>
+                                <hr></hr>
+                                <p>{ticket.name}</p>
+                                <label>Beschreibung:</label>
+                                <hr></hr>
+                                <p>{ticket.description}</p>
+                                <label>Time Management:</label>
+                                <hr></hr>
+                                <p>Schätzung: {ticket.estimation} h</p>
+                                <p>Protokolliert: {logging} h</p>
+                                <Line
+                                    progress={this.state.progress}
+                                    options={{
+                                        strokeWidth: 4,
+                                        color: '#16DD00',
+                                        trailColor: '#EEE',
+                                    }}
+                                    initialAnimate={true}
+                                    containerStyle={{
+                                        width: '200px',
+                                        height: '20px'
+                                    }}
+                                    containerClassName={'.progressbar'}/>
+                                <p>{this.state.progress} %</p>
+                                <ul>
+                                    {_.map(_.range(ticket.logging.length), function (i) {
+                                        const user = $this.getUser(ticket.logging[i].user);
+                                        return <li className="log__item">
+                                            <p>{ticket.logging[i].date}: {user.firstName} {user.lastName} - {ticket.logging[i].time} h</p>
+                                        </li>
+                                    })}
+                                </ul>
+                                <GenericForm
+                                    onSubmit={() => handleSubmit(this.handleFormSubmit3)}
+                                    //errors={errors}
+                                    //message={message}
+                                    formSpec={SingleTicket.formSpec3}
+                                    submitText="Protokollieren"
+                                />
+                                <label>Files:</label>
+                                <hr></hr>
+                                <ul className="files__list">
+                                    {_.map(_.range(ticket.files.length), function (i) {
+                                        return <li className="file__item">
+                                            <img src={ticket.files[i].file}/>
+                                            <span>{ticket.files[i].uploadedAt}</span>
+                                        </li>
+                                    })}
+                                </ul>
+                                <div className="uploadzone" onDrop={(e) => $this.handleDrop(e)}
+                                     onClick={() => $this.chooseFile}>
+                                    <input type="file" id="imgupload" onChange={(e) => $this.handleDrop(e)}/>
+                                    Drop files here or click to choose
+                                </div>
+                                <label>Comments:</label>
+                                <hr></hr>
+                                <ul>
+                                    {_.map(_.range(ticket.comments.length), function (i) {
+                                        if (ticket.comments[i].user === user.id) {
+                                            const author = $this.getUser(ticket.comments[i].user);
+                                            return <li>
+                                                <p>{author.firstName} {author.lastName} | {ticket.comments[i].updatedAt}</p>
+                                                <form className={"form " + "comment__form"}
+                                                      onSubmit={() => handleSubmit($this.handleFormSubmit2)}
+                                                      onMouseEnter={() => $this.showSubmit(ticket.comments[i].id)}
+                                                      onMouseLeave={() => $this.hideSubmit(ticket.comments[i].id)}
+                                                >
+                                                    <input type="text" name="title"
+                                                           defaultValue={ticket.comments[i].title}
+                                                           id={"title_" + ticket.comments[i].id}
+                                                           className="form-control" placeholder="Betreff"
+                                                    />
+                                                    <textarea name="message" defaultValue={ticket.comments[i].message}
+                                                              id={"message_" + ticket.comments[i].id}
+                                                              placeholder="Nachricht" className="form-control"
+                                                              onChange={(evt) => $this.onTextChange(evt.target.value, evt.target.id)}
+                                                    />
+                                                    <button type="submit" id={"comment__" + ticket.comments[i].id}
+                                                            className="button is-primary">Update
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        } else {
+                                            return <li>
+                                                <p>{ticket.comments[i].user} | {ticket.comments[i].updatedAt}</p>
+                                                <p>Betreff: {ticket.comments[i].title}</p>
+                                                <p>Nachricht: {ticket.comments[i].message}</p>
+                                            </li>
+                                        }
+                                    })}
+                                </ul>
+                                <GenericForm
+                                    onSubmit={() => handleSubmit(this.handleFormSubmit2)}
+                                    //errors={errors}
+                                    //message={message}
+                                    formSpec={SingleTicket.formSpec2}
+                                    submitText="Kommentieren"
+                                />
+                            </div>
+                            <div className="ticket__info-2">
+                                <label>Nutzer:</label>
+                                <hr></hr>
+                                <span>Ersteller</span>
+                                <p><img src={originUser.avatar}
+                                        className="user-avatar"/> {originUser.firstName} {originUser.lastName}</p>
+                                <span>Bearbeiter</span>
+                                <Select
+                                    id="user-select"
+                                    options={options}
+                                    name="selected-user"
+                                    value={options[Object.keys(user).length !== 0 ? getCurrOption(user.id) : 0]}
+                                    onChange={(e) => $this.onUserChange(ticket.id, e)}
+                                    searchable={true}
+                                />
+                                <label>Priority:</label>
+                                <hr></hr>
+                                <p>{ticket.priority === "1" ? <span><i className="material-icons p-1"
+                                                                       title="Low">arrow_downward</i> {priority[ticket.priority]}</span> : ''}</p>
+                                <p>{ticket.priority === "2" ? <span><i className="material-icons p-2"
+                                                                       title="Medium">radio_button_unchecked</i> {priority[ticket.priority]}</span> : ''}</p>
+                                <p>{ticket.priority === "3" ? <span><i className="material-icons p-3"
+                                                                       title="High">priority_high</i> {priority[ticket.priority]}</span> : ''}</p>
+                                <p>{ticket.priority === "4" ? <span><i className="material-icons p-4"
+                                                                       title="Blocker">do_not_disturb_alt</i> {priority[ticket.priority]}</span> : ''}</p>
+                                <label>Category:</label>
+                                <hr></hr>
+                                <p>{ticket.category === "1" ? <span><i className="material-icons"
+                                                                       title="Story">speaker_notes</i> {category[parseInt(ticket.category)]}</span> : ''}</p>
+                                <p>{ticket.category === "2" ? <span><i className="material-icons"
+                                                                       title="FE-Task">web</i> {category[parseInt(ticket.category)]}</span> : ''}</p>
+                                <p>{ticket.category === "3" ? <span><i className="material-icons"
+                                                                       title="BE-Task">developer_board</i> {category[parseInt(ticket.category)]}</span> : ''}</p>
+                                <label>Aktuell in Sprint:</label>
+                                <hr></hr>
+                                <p>{ticket.sprint >= 0 ? project.sprints[ticket.sprint].name : 'Kein Sprint'}</p>
+                            </div>
+                        </div>
                     </div>
-                    <h2>Comments:</h2>
-                    <ul>
-                        {_.map(_.range(ticket.comments.length), function (i) {
-                            if (ticket.comments[i].user === user.id) {
-                                const author = $this.getUser(ticket.comments[i].user);
-                                return <li>
-                                    <p>{author.firstName} {author.lastName} | {ticket.comments[i].updatedAt}</p>
-                                    <form className={"form " + "comment__form"}
-                                          onSubmit={handleSubmit($this.handleFormSubmit2)}
-                                          onMouseEnter={() => $this.showSubmit(ticket.comments[i].id)}
-                                          onMouseLeave={() => $this.hideSubmit(ticket.comments[i].id)}
-                                    >
-                                        <input type="text" name="title" defaultValue={ticket.comments[i].title}
-                                               id={"title_" + ticket.comments[i].id}
-                                               className="form-control" placeholder="Betreff"
-                                        />
-                                        <textarea name="message" defaultValue={ticket.comments[i].message}
-                                                  id={"message_" + ticket.comments[i].id}
-                                                  placeholder="Nachricht" className="form-control"
-                                                  onChange={(evt) => $this.onTextChange(evt.target.value, evt.target.id)}
-                                        />
-                                        <button type="submit" id={"comment__" + ticket.comments[i].id}
-                                                className="button is-primary">Update
-                                        </button>
-                                    </form>
-                                </li>
-                            } else {
-                                return <li>
-                                    <p>{ticket.comments[i].user} | {ticket.comments[i].updatedAt}</p>
-                                    <p>Betreff: {ticket.comments[i].title}</p>
-                                    <p>Nachricht: {ticket.comments[i].message}</p>
-                                </li>
-                            }
-                        })}
-                    </ul>
-                    <GenericForm
-                        onSubmit={handleSubmit(this.handleFormSubmit2)}
-                        //errors={errors}
-                        //message={message}
-                        formSpec={SingleTicket.formSpec2}
-                        submitText="Kommentieren"
-                    />
                     <Modal open={open} onClose={this.onCloseModal} little>
                         <h2>Update Ticket</h2>
                         <GenericForm
-                            onSubmit={handleSubmit(this.handleFormSubmit)}
+                            onSubmit={() => handleSubmit(this.handleFormSubmit)}
                             //errors={errors}
                             //message={message}
                             formSpec={SingleTicket.formSpec}
@@ -374,7 +520,6 @@ export class SingleTicket extends Component {
     }
 }
 
-//
 const mapStateToProps = (state) => {
     return {
         project: state.project.project,
