@@ -14,7 +14,7 @@ import {getProject, editProject} from '../../redux/modules/project';
 import {editUser, getUsers} from '../../redux/modules/user';
 import Modal from 'react-responsive-modal';
 import Moment from 'moment';
-import FontAwesome from 'react-fontawesome';
+import {Calendar} from 'react-calendar-component';
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -26,13 +26,17 @@ export class SingleSprint extends Component {
     constructor(props) {
         super(props);
 
+        Moment.locale('de');
+
         const layout = this.generateLayout();
 
         this.state = {
             layout: layout,
             open: false,
+            open2: false,
             currentTicket: null,
-            droppedTicket: null
+            droppedTicket: null,
+            date: Moment()
         };
     }
 
@@ -50,9 +54,9 @@ export class SingleSprint extends Component {
 
     static propTypes = {
         handleSubmit: PropTypes.func,
-        createSprint: PropTypes.func,
+        updateSprint: PropTypes.func,
+        deleteSprint: PropTypes.func,
         createTicket: PropTypes.func,
-        updateTicket: PropTypes.func,
         updateUser: PropTypes.func,
         /*errors: errorPropTypes,
         message: PropTypes.string,
@@ -109,6 +113,41 @@ export class SingleSprint extends Component {
             label: 'Schätzung',
             type: 'number',
             placeholder: 'in h',
+            component: TextInput
+        },
+    ];
+
+    static formSpec2 = [
+        {
+            id: 'name',
+            name: 'name',
+            label: 'Sprintname',
+            type: 'text',
+            placeholder: 'Sprintname',
+            component: TextInput
+        },
+        {
+            id: 'description',
+            name: 'description',
+            label: 'Beschreibung',
+            type: 'text',
+            placeholder: '...',
+            component: Textarea
+        },
+        {
+            id: 'begin',
+            name: 'begin',
+            label: 'Startdatum',
+            type: 'date',
+            placeholder: 'xx.xx.xxxx',
+            component: TextInput
+        },
+        {
+            id: 'end',
+            name: 'end',
+            label: 'Enddatum',
+            type: 'date',
+            placeholder: 'xx.xx.xxxx',
             component: TextInput
         },
     ];
@@ -171,6 +210,31 @@ export class SingleSprint extends Component {
         this.setState({open: false});
     };
 
+    onOpenModal2 = () => {
+        const projectData = this.props.project;
+        const sprintId = window.location.href.split('/')[4].split('-')[1];
+        for(let i=0; i < SingleSprint.formSpec2.length; i++) {
+            Object.keys(SingleSprint.formSpec2[i]).forEach(function(fKey) {
+                if(fKey === 'name') {
+                    Object.keys(projectData.sprints[sprintId]).forEach(function(pKey) {
+                        if(pKey === SingleSprint.formSpec2[i][fKey]) {
+                            if(pKey === 'begin' || pKey === 'end') {
+                                SingleSprint.formSpec2[i]['defaultValue'] = Moment(projectData.sprints[sprintId][pKey]).format('YYYY-MM-DD');
+                            } else {
+                                SingleSprint.formSpec2[i]['defaultValue'] = projectData.sprints[sprintId][pKey];
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        this.setState({open2: true});
+    };
+
+    onCloseModal2 = () => {
+        this.setState({open2: false});
+    };
+
     onSprintChange = obj => {
         window.location.href = window.location.href + '_' + obj.value;
     };
@@ -206,6 +270,15 @@ export class SingleSprint extends Component {
 
     onDragStop = (e, node) => {
         this.setState({droppedTicket: node.i});
+    };
+
+    deleteSprint = (sId) => {
+        const projectData = this.props.project;
+        const id = projectData.id;
+        delete projectData.id;
+        projectData.sprints.splice(sId, 1);
+        this.props.deleteSprint(id, projectData);
+        location.reload();
     };
 
     onLayoutChange = layout => {
@@ -264,6 +337,17 @@ export class SingleSprint extends Component {
         this.props.createTicket(id, formData);
     };
 
+    handleFormSubmit2 = formProps => {
+        const formData = this.props.project;
+        const id = formData.id;
+        delete formData.id;
+        formProps.id = window.location.href.split('-')[1];
+        formProps.isActive = formData.sprints[formProps.id].isActive;
+        formProps.tickets = formData.sprints[formProps.id].tickets;
+        formData.sprints[formProps.id] = formProps;
+        this.props.createSprint(id, formData);
+    };
+
     generateDOM() {
         if (!this.props.project && !this.props.user) {
             return null;
@@ -272,15 +356,11 @@ export class SingleSprint extends Component {
             const projectTickets = this.props.project.tickets;
             const sprintTickets = this.props.project.sprints[window.location.href.split('-')[1]].tickets;
             const tickets = [];
-            for(let i=0; i < sprintTickets.length; i++) {
+            for (let i = 0; i < sprintTickets.length; i++) {
                 tickets.push(projectTickets[sprintTickets[i]]);
             }
             const prefix = this.props.project.prefix;
             const currProject = window.location.href.split('/')[4].split('-')[0];
-            const divStyle = {
-                width: '30px',
-                height: '30px',
-            };
             const apiUrl = "http://localhost:3000/";
             const $this = this;
 
@@ -300,13 +380,26 @@ export class SingleSprint extends Component {
                             <Link className="ticket__link" to={"/ticket/" + currProject + "-" + i}>
                                 <p className="ticket__name">{prefix + '-' + tickets[i].id}</p>
                             </Link>
+                            <div className="ticket__category">
+                                {tickets[i].category === "1" ? <i className="material-icons" title="Story">speaker_notes</i> : ''}
+                                {tickets[i].category === "2" ? <i className="material-icons" title="FE-Task">web</i> : ''}
+                                {tickets[i].category === "3" ? <i className="material-icons" title="BE-Task">developer_board</i> : ''}
+                            </div>
+                            <div className="ticket__priority">
+                                {tickets[i].priority === "1" ? <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
+                                {tickets[i].priority === "2" ? <i className="material-icons p-2" title="Medium">radio_button_unchecked</i> : ''}
+                                {tickets[i].priority === "3" ? <i className="material-icons p-3" title="High">priority_high</i> : ''}
+                                {tickets[i].priority === "4" ? <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
+                            </div>
+                        </div>
+                        <div className="ticket__row">
+                            <p className="ticket__name">{tickets[i].name}</p>
                         </div>
                         <div className="ticket__row">
                             <p className="ticket__user-label">Bearbeiter:</p>
                             <img
                                 src={Object.keys(user).length !== 0 ? user.avatar : apiUrl + 'default.png'}
                                 className="ticket__user-image"
-                                style={divStyle}
                                 title={Object.keys(user).length !== 0 ? user.firstName + ' ' + user.lastName : 'Kein Bearbeiter'}
                             />
                         </div>
@@ -333,7 +426,7 @@ export class SingleSprint extends Component {
             const projectTickets = this.props.project.tickets;
             const sprintTickets = this.props.project.sprints[window.location.href.split('-')[1]].tickets;
             const tickets = [];
-            for(let i=0; i < sprintTickets.length; i++) {
+            for (let i = 0; i < sprintTickets.length; i++) {
                 tickets.push(projectTickets[sprintTickets[i]]);
             }
             if (tickets.length > 0) {
@@ -342,7 +435,7 @@ export class SingleSprint extends Component {
                         x: item.state ? item.state : 0,
                         y: i,
                         w: 1,
-                        h: 3,
+                        h: 4,
                         i: i.toString(),
                     };
                 });
@@ -355,29 +448,79 @@ export class SingleSprint extends Component {
     render = () => {
         const {handleSubmit, errors, message} = this.props;
         const {open} = this.state;
+        const {open2} = this.state;
 
         if (!this.props.project) {
             return null;
         } else {
-            //
             const project = this.props.project;
+            const currUser = this.props.user;
             const sprint = this.props.project.sprints[window.location.href.split('-')[1]];
             const options = this.createOptions2();
+            const isProjectOwner = project.users[0] === currUser.id;
+            const isActive = Date.now() > Date.parse(sprint.begin) || sprint.isActive;
+            let timeLeft = '';
+            if (Date.now() > Date.parse(sprint.begin)) {
+                timeLeft = Date.parse(sprint.end) - Date.now();
+            } else {
+                timeLeft = Date.parse(sprint.end) - Date.parse(sprint.begin);
+            }
             const $this = this;
             this.state.layout = this.generateLayout();
             return (
                 <div>
-                    <div className="col-lg-12">
-                        <h2>{project.name} - {sprint.name}</h2>
-                        <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
-                        <Select
-                            id="sprint-select"
-                            options={options}
-                            name="selected-sprint"
-                            value={options[sprint.id + 1]}
-                            onChange={(e) => $this.onSprintChange(e)}
-                            searchable={true}
-                        />
+                    <div className="sprint__container">
+                        <div className="sprint__header">
+                            <h2>{project.name} | {sprint.name}</h2>
+                            {isActive ? <span className="is-active">Active</span> :
+                                <span className="not-active">Not Active</span>}
+                            {isProjectOwner ?
+                                <button onClick={() => this.deleteSprint(sprint.id)}
+                                        className="button is-primary">Delete
+                                    Sprint</button> : ''}
+                            {isProjectOwner ?
+                                <button onClick={this.onOpenModal2} className="button is-primary">Update
+                                    Sprint</button> : ''}
+                        </div>
+                        <div className="sprint__action">
+                            <Select
+                                id="sprint-select"
+                                options={options}
+                                name="selected-sprint"
+                                className="sprint-select"
+                                value={options[0]}
+                                onChange={(e) => $this.onSprintChange(e)}
+                                searchable={true}
+                            />
+                        </div>
+                        <div className="sprint__info-container">
+                            <div className="sprint__info">
+                                <label>Beschreibung:</label>
+                                <hr></hr>
+                                <p>{sprint.description}</p>
+                                <label>Zeit:</label>
+                                <hr></hr>
+                                <Calendar
+                                    onChangeMonth={(date) => $this.setState({date})}
+                                    date={$this.state.date}
+                                    startDate={Moment(sprint.begin)}
+                                    endDate={Moment(sprint.end)}
+                                    onPickDate={date => console.log(date)}
+
+                                />
+                                <hr></hr>
+                                <div>Today: {Moment(Date.now()).format('DD.MM.YYYY')}</div>
+                                <div>Start: {Moment(sprint.begin).format('DD.MM.YYYY')}</div>
+                                <div>End: {Moment(sprint.end).format('DD.MM.YYYY')}</div>
+                                <div>Left: {Moment(timeLeft).format('DD')} Day(s)</div>
+                            </div>
+                        </div>
+                        <div className="sprint__tickets">
+                            <button onClick={this.onOpenModal} className="button is-primary">Create Ticket</button>
+                            <a href={"/project/" + project.id} className="inline">
+                                <button className="button is-primary">Zum Project</button>
+                            </a>
+                        </div>
                     </div>
                     <div className="col-lg-2">Offen</div>
                     <div className="col-lg-2">In Arbeit</div>
@@ -401,6 +544,16 @@ export class SingleSprint extends Component {
                             //message={message}
                             formSpec={SingleSprint.formSpec}
                             submitText="Create"
+                        />
+                    </Modal>
+                    <Modal open={open2} onClose={this.onCloseModal2} id="sprint-update" little>
+                        <h2>Update Sprint</h2>
+                        <GenericForm
+                            onSubmit={handleSubmit(this.handleFormSubmit2)}
+                            //errors={errors}
+                            //message={message}
+                            formSpec={SingleSprint.formSpec2}
+                            submitText="Update"
                         />
                     </Modal>
                 </div>
@@ -428,13 +581,13 @@ const mapDispatchToProps = (dispatch) => {
         loadUsers: () => {
             dispatch(getUsers());
         },
-        createSprint: (id, formData) => {
+        updateSprint: (id, formData) => {
+            dispatch(editProject(id, formData));
+        },
+        deleteSprint: (id, formData) => {
             dispatch(editProject(id, formData));
         },
         createTicket: (id, formData) => {
-            dispatch(editProject(id, formData));
-        },
-        updateTicket: (id, formData) => {
             dispatch(editProject(id, formData));
         },
         updateUser: (id, formData) => {

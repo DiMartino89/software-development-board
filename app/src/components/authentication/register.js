@@ -28,7 +28,7 @@ class Register extends Component {
             name: 'name.first',
             label: 'First Name',
             type: 'text',
-            placeholder: 'John',
+            placeholder: 'First Name',
             component: TextInput
         },
         {
@@ -36,7 +36,7 @@ class Register extends Component {
             name: 'name.last',
             label: 'Last Name',
             type: 'text',
-            placeholder: 'Snow',
+            placeholder: 'Last Name',
             component: TextInput
         },
         {
@@ -77,8 +77,8 @@ class Register extends Component {
         const {handleSubmit, errors, message, loading} = this.props;
 
         return (
-            <div className={`auth-box ${loading ? 'is-loading' : ''}`}>
-                <h1>Register</h1>
+            <div className={`auth__container ${loading ? 'is-loading' : ''}`}>
+                <h2>Register</h2>
                 <GenericForm
                     onSubmit={handleSubmit(this.handleFormSubmit)}
                     errors={errors}

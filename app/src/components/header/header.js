@@ -11,6 +11,8 @@ import $ from 'jquery';
 class Header extends Component {
     state = {
         isMobile: window.innerWidth <= mobileBreakpoint,
+        isLogin: window.location.href.indexOf("login") > -1,
+        isRegister: !window.location.href.indexOf("register") > -1,
         mobileNavOpen: false,
     };
 
@@ -23,8 +25,10 @@ class Header extends Component {
     };
 
     componentDidMount() {
-        this.props.loadProjects();
-        this.props.loadUsers();
+        if(!this.state.isLogin || !this.state.isRegister) {
+            this.props.loadProjects();
+            this.props.loadUsers();
+        }
     };
 
     getUser = id => {
@@ -39,10 +43,7 @@ class Header extends Component {
 
     buildNavigation = () => {
         const {user} = this.props;
-        const divStyle = {
-            width: '30px',
-            height: '30px',
-        };
+
         const links = [
             {
                 name: 'Dashboard',
@@ -61,16 +62,16 @@ class Header extends Component {
             },
             {
                 name: 'Avatar',
-                link: '/user/' + user.id,
+                link: '',
                 authenticated: true,
             },
             {
-                name: 'Sign out',
+                name: 'Logout',
                 onClick: this.props.logoutUser,
                 authenticated: true,
             },
             {
-                name: 'Sign in',
+                name: 'Login',
                 link: '/login',
                 authenticated: false,
             },
@@ -84,14 +85,25 @@ class Header extends Component {
         return (
             <ul>
                 {links.filter(link => link.authenticated === this.props.authenticated).map(link => {
-                    if (user && link.name === 'Invitations') {
+                    if (user && link.name === 'Dashboard') {
                         return <li key={link.name}>
-                                <span onClick={link.onClick}
-                                      className="user-invitations">Einladungen {user.invitations.length}</span>
+                            <a href={link.link} title="Dashboard"><i className="material-icons">dashboard</i></a>
+                        </li>
+                    } else if (user && link.name === 'Create') {
+                        return <li key={link.name}>
+                            <a href={link.link} title="Create Project"><i className="material-icons">create</i></a>
+                        </li>
+                    } else if (user && link.name === 'Invitations') {
+                        return <li key={link.name}>
+                            <span onClick={link.onClick} title="Invitations"><i className="material-icons">mail {user.invitations.length > 0 ? <div className="news__icon"><span>{user.invitations.length}</span></div> : ''}</i></span>
                         </li>
                     } else if (user && link.name === 'Avatar') {
                         return <li key={link.name}>
-                            <a href={'/user/' + user.id}><img src={user.avatar} className="user-avatar" style={divStyle}/></a>
+                            <a href={'/user/' + user.id} title="Profile"><img src={user.avatar} /></a>
+                        </li>
+                    } else if (user && link.name === 'Logout') {
+                        return <li key={link.name}>
+                            <a href="javascript:void(null);" onClick={link.onClick} title="Logout"><i className="material-icons">exit_to_app</i></a>
                         </li>
                     } else {
                         return <li key={link.name}>
@@ -106,26 +118,31 @@ class Header extends Component {
     };
 
     openInvitations = () => {
+        // Toggle the invitation-panel
         $('#invitation-panel').fadeToggle();
     };
 
     signToProject = (index, pId) => {
+        // Update User Data - Remove invitation
         const userData = this.props.user;
         const userId = userData.id;
         delete userData.id;
         userData.invitations.splice(index, 1);
         this.props.updateUser(userId, userData);
 
+        // Update Project Data - Add user to project
         const projectData = this.getProject(pId);
         const projectId = projectData.id;
         delete projectData.id;
         projectData.users.push(userId);
         this.props.updateProject(projectId, projectData);
 
+        // Reload the current page
         location.reload();
     };
 
     refuseInvitation = (index) => {
+        // Update User Data - Only remove invitation
         const userData = this.props.user;
         const userId = userData.id;
         delete userData.id;
@@ -141,7 +158,7 @@ class Header extends Component {
         const $this = this;
         return (
             <header className="clearfix">
-                <strong className="logo left">MKRN Starter</strong>
+                <strong className="logo left"><img src="../../assets/img/sdb-logo.png" className="app-logo" /></strong>
                 {isMobile &&
                 <a
                     href="javascript:void(null);"

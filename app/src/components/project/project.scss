@@ -1,0 +1,255 @@
+// Create Project
+.creation__container {
+  width: 100%;
+  max-width: 425px;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.cancel {
+  float: right;
+  margin-top: -36px;
+}
+
+// Single Project
+.project__container {
+  display: block;
+  height: auto;
+  margin: 0 auto 20px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.project__header {
+
+  h2 {
+    display: inline-block;
+    float: left;
+    width: 50%;
+  }
+
+  .is-active {
+    display: inline-block;
+    width: 15%;
+    float: right;
+    color: rgba(0, 173, 14, 0.7);
+    font-size: 20px;
+    padding: 5px;
+    border: 1px solid rgba(0, 173, 14, 0.7);
+    margin: 0 2px;
+    text-align: center;
+  }
+
+  .not-active {
+    display: inline-block;
+    width: 15%;
+    float: right;
+    color: rgba(255,48,68,0.7);
+    font-size: 20px;
+    padding: 5px;
+    border: 1px solid rgba(255,48,68,0.7);
+    margin: 0 2px;
+    text-align: center;
+  }
+
+  button {
+    display: inline-block;
+    margin: 6px 0;
+    width: 15%;
+    float: right;
+  }
+}
+
+.project__action {
+  display: table;
+  background: rgba(180,180,180,0.7);
+  margin: 4px 2px;
+  width: calc(100% - 4px);
+
+  .sprint-select {
+    display: inline-block;
+    width: 85%;
+    float: left;
+  }
+
+  button {
+    width: 15%;
+    float: right;
+  }
+}
+
+.project__info {
+  background: rgba(180,180,180,0.7);
+  display: inline-block;
+  margin: 0 2px;
+  padding: 10px;
+  width: calc(70% - 4px);
+  height: auto;
+  min-height: 250px;
+  float: left;
+
+  &-container {
+    display: table;
+    width: 100%;
+    margin: 0 0 4px;
+  }
+}
+
+.project__members {
+  background: rgba(180,180,180,0.7);
+  display: inline-block;
+  margin: 0 2px;
+  padding: 10px;
+  width: calc(30% - 4px);
+  height: auto;
+  min-height: 250px;
+  float: right;
+
+  &-invitation {
+    bottom: 0;
+  }
+
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.project__tickets {
+  display: table;
+  background: rgba(180,180,180,0.7);
+  margin: 4px 2px;
+  width: calc(100% - 4px);
+
+  a {
+    display: block;
+  }
+
+  button {
+    width: 15%;
+    float: right;
+  }
+}
+
+.is-closed {
+  .ticket__name {
+    text-decoration: line-through;
+  }
+}
+
+.ticket__link {
+  display: inline-block;
+  float: left;
+  width: 70%;
+}
+
+.ticket__category {
+  display: inline-block;
+  float: right;
+  text-align: right;
+  width: 15%;
+}
+
+.ticket__priority {
+  display: inline-block;
+  float: right;
+  text-align: right;
+  width: 15%;
+
+  .material-icons {
+    font-size: 20px;
+    padding: 2px !important;
+  }
+
+  .p-1 {
+    color: rgba(0, 173, 14, 0.7);
+  }
+
+  .p-2 {
+    color: rgba(221,198,58,0.7);
+  }
+
+  .p-3,
+  .p-4 {
+    color: rgba(255,48,68,0.7);
+  }
+}
+
+.ticket__user-image {
+  width: 30px !important;
+  height: 30px;
+}
+
+//Calendar Stuff
+#calendar {
+  width: 640px;
+  height: 480px;
+  margin: 100px auto;
+}
+
+.Calendar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.Calendar-header {
+  height: 50px;
+  background: #333;
+  color: #fff;
+  text-align: center;
+  line-height: 50px;
+  display: flex;
+  font-size: 20px;
+  justify-content: space-between;
+}
+
+.Calendar-header button {
+  width: 50px;
+  font-size: 20px;
+  border: 0;
+  background: transparent;
+  color: #ddd;
+  cursor: pointer;
+}
+
+.Calendar-grid-item {
+  flex: 0 14.28571%;
+  text-align: center;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &--current {
+    border: 1px solid #666;
+    font-weight: bold;
+  }
+
+  &--start {
+    background: rgba(0,173,14,0.7);
+  }
+
+  &--project-day {
+    background: rgba(0,216,7,0.3);
+  }
+
+  &--end {
+    background: rgba(255,48,68,0.7);
+  }
+}
+
+.Calendar-grid-item.nextMonth,
+.Calendar-grid-item.prevMonth {
+  color: #999;
+}
+
+.Calendar-grid-item:nth-child(7n+1) {
+  border-left: 1px solid #ddd;
+}
+
+.Calendar-grid-item:nth-child(-n+7) {
+  border-top: 1px solid #ddd;
+}

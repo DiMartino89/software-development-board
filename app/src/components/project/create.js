@@ -78,8 +78,8 @@ class CreateProject extends Component {
         const {handleSubmit, errors, message, loading} = this.props;
 
         return (
-            <div className={`auth-box ${loading ? 'is-loading' : ''}`}>
-                <h1>Create Project</h1>
+            <div className={`creation__container ${loading ? 'is-loading' : ''}`}>
+                <h2>Create Project</h2>
                 <GenericForm
                     onSubmit={handleSubmit(this.handleFormSubmit)}
                     //errors={errors}
@@ -87,7 +87,7 @@ class CreateProject extends Component {
                     formSpec={CreateProject.formSpec}
                     submitText="Create"
                 />
-                <Link className="inline" to="/">Cancel</Link>
+                <Link className="inline cancel" to="/dashboard"><button className="button is-primary">Cancel</button></Link>
             </div>
         );
     }

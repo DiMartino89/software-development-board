@@ -1,7 +1,7 @@
 import React from 'react';
 import { fieldPropTypes } from '../../util/proptype-utils';
 
-const TextInput = ({ input, meta, id, placeholder, type, label = '', maxLength, extraClasses = '' }) => (
+const TextInput = ({ input, meta, id, placeholder, type, defaultValue, label = '', maxLength, extraClasses = '' }) => (
   <label htmlFor={id} className="form-label">
     {label}
     {meta.touched && meta.error && <div className="alert alert-card alert-error">{meta.error}</div>}
@@ -11,6 +11,7 @@ const TextInput = ({ input, meta, id, placeholder, type, label = '', maxLength, 
       className={`form-control ${extraClasses}`}
       placeholder={placeholder}
       type={type}
+      value={defaultValue}
       maxLength={maxLength}
     />
   </label>

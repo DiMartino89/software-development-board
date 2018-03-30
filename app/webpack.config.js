@@ -45,6 +45,11 @@ module.exports = () => ({
                 test: /\.(css|scss)$/,
                 loader: ['style-loader', 'css-loader', 'sass-loader'],
             },
+            {
+                test: /\.(jpg|png|gif)$/,
+                include: path.join(__dirname, 'src/assets/img'),
+                loaders: ['file-loader']
+            },
         ],
     },
     devServer: {

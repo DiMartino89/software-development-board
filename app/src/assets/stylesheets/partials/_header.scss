@@ -14,6 +14,11 @@ header {
     line-height: $header-height;
   }
 
+  .app-logo {
+    width: auto;
+    height: 50px;
+  }
+
   // Navigation
   nav {
     // Mobile navigation
@@ -51,11 +56,16 @@ header {
 
       li {
         display: inline-block;
-        padding: 0 10px;
+        padding: 0 20px;
         line-height: $header-height;
 
         &:last-of-type {
           padding-right: 0;
+        }
+
+        img {
+          width: 30px;
+          height: 30px;
         }
       }
     }

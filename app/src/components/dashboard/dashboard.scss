@@ -1,0 +1,57 @@
+.dashboard__headline {
+  margin: 10px auto;
+  max-width: 1000px;
+}
+
+.dashboard__container {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.dashboard__list-header {
+  background: rgba(180,180,180,0.7);
+  display: inline-block;
+  height: auto;
+  margin: 0 2px;
+  padding: 5px;
+  width: calc(16.666667% - 4px);
+}
+
+.dashboard__list-item {
+  margin: 10px 0;
+}
+
+.dashboard__list-info {
+  background: rgba(210,210,210,0.7);
+  display: inline-block;
+  height: auto;
+  margin: 0 2px;
+  padding: 5px;
+  width: calc(16.666667% - 4px);
+}
+
+.dashboard__ticket-container {
+  margin: 10px 0 10px 16.666667%;
+  width: calc(100% - 16.666667%);
+}
+
+.dashboard__sublist-header {
+  background: rgba(230,230,230,0.7);
+  display: inline-block;
+  height: auto;
+  margin: 0 2px;
+  padding: 5px;
+  width: calc(16.666667% - 4px);
+}
+
+.dashboard__ticket-item {
+  background: rgba(250,250,250,0.7);
+  display: inline-block;
+  height: auto;
+  margin: 0 2px;
+  padding: 5px;
+  width: calc(16.666667% - 4px);
+}

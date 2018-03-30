@@ -22,6 +22,10 @@ export class Dashboard extends Component {
         this.props.loadUsers();
     };
 
+    getUser = (id) => {
+        return this.props.users[id];
+    };
+
     updateUser = (id, data) => {
         this.props.updateUser(id, data);
     };
@@ -44,63 +48,80 @@ export class Dashboard extends Component {
         if (!this.props.projects && !this.props.user) {
             return null;
         } else {
-            const state = ['Offen','In Arbeit','To Review','In Review', 'Freigabe', 'Geschlossen'];
-            const category = ['Keine Kategorie','Story','FE-Task','BE-Task'];
-            const priority = ['Keine Priorität','Low','Medium','High','Blocker'];
+            const state = ['Offen', 'In Arbeit', 'To Review', 'In Review', 'Freigabe', 'Geschlossen'];
+            const category = ['Keine Kategorie', 'Story', 'FE-Task', 'BE-Task'];
+            const priority = ['Keine Priorität', 'Low', 'Medium', 'High', 'Blocker'];
             const projects = this.props.projects;
             const userId = this.props.user.id;
             const $this = this;
             return (
                 <div>
-                    <h2>Dashboard</h2>
-                    <ul>
-                        <div className="col-lg-2 list__header">ID</div>
-                        <div className="col-lg-2 list__header">Name</div>
-                        <div className="col-lg-2 list__header">Beschreibung</div>
-                        <div className="col-lg-2 list__header">Projektstart</div>
-                        <div className="col-lg-2 list__header">Livegang</div>
-                        <div className="col-lg-2 list__header">Link</div>
-                        {Object.keys(projects).map(function (key, index) {
-                            const isProjectOwner = projects[key].users[0] === userId;
-                            if (projects[key].users.includes(userId)) {
-                                return <li className="list__item">
-                                    <div className="col-lg-2 list__project">{key}</div>
-                                    <div className="col-lg-2 list__project">{projects[key].name}</div>
-                                    <div className="col-lg-2 list__project">{projects[key].description}</div>
-                                    <div className="col-lg-2 list__project">{Moment(projects[key].begin).format('DD.MM.YYYY')}</div>
-                                    <div className="col-lg-2 list__project">{Moment(projects[key].end).format('DD.MM.YYYY')}</div>
-                                    <div className="col-lg-2 list__project">
-                                        <Link className="inline" to={"/project/" + key}>Zum Projekt</Link>
-                                        {isProjectOwner ? <button onClick={() => $this.deleteProject(key)} className="button is-primary">Delete
-                                            Project</button> : ''}
-                                    </div>
-                                    <div className="col-lg-2 list__header">ID</div>
-                                    <div className="col-lg-2 list__header">Name</div>
-                                    <div className="col-lg-2 list__header">Status</div>
-                                    <div className="col-lg-2 list__header">Kategorie</div>
-                                    <div className="col-lg-2 list__header">Priorität</div>
-                                    <div className="col-lg-2 list__header">Link</div>
-                                        {_.map(_.range(projects[key].tickets.length), function (i) {
-                                            const ticketOwner = projects[key].tickets[i].originUser === userId;
-                                            if(projects[key].tickets[i].user === userId) {
-                                                return <div>
-                                                    <div className="col-lg-2 list__ticket">{projects[key].tickets[i].id}</div>
-                                                    <div className="col-lg-2 list__ticket">{projects[key].tickets[i].name}</div>
-                                                    <div className="col-lg-2 list__ticket">{state[projects[key].tickets[i].state]}</div>
-                                                    <div className="col-lg-2 list__ticket">{category[projects[key].tickets[i].category]}</div>
-                                                    <div className="col-lg-2 list__ticket">{priority[projects[key].tickets[i].priority]}</div>
-                                                    <div className="col-lg-2 list__ticket">
-                                                        <Link className="inline" to={"/ticket/" + key + '-' + projects[key].tickets[i].id}>Zum Ticket</Link>
-                                                        {ticketOwner ? <button onClick={() => $this.deleteTicket(i)} className="button is-primary">Delete
-                                                            Ticket</button> : ''}
+                    <h2 className="dashboard__headline">Dashboard</h2>
+                    <div className="dashboard__container">
+                        <ul>
+                            <div className="dashboard__list-header">ID</div>
+                            <div className="dashboard__list-header">Name</div>
+                            <div className="dashboard__list-header">Owner</div>
+                            <div className="dashboard__list-header">Projektstart</div>
+                            <div className="dashboard__list-header">Livegang</div>
+                            <div className="dashboard__list-header">Link</div>
+                            {Object.keys(projects).map(function (key, index) {
+                                const isProjectOwner = projects[key].users[0] === userId;
+                                const projectOwner = $this.getUser(projects[key].users[0]);
+                                if (projects[key].users.includes(userId)) {
+                                    return <li className="dashboard__list-item">
+                                        <div className="dashboard__list-info">{key.substring(0,10)}</div>
+                                        <div className="dashboard__list-info">{projects[key].name}</div>
+                                        <div
+                                            className="dashboard__list-info">{projectOwner.firstName} {projectOwner.lastName}</div>
+                                        <div
+                                            className="dashboard__list-info">{Moment(projects[key].begin).format('DD.MM.YYYY')}</div>
+                                        <div
+                                            className="dashboard__list-info">{Moment(projects[key].end).format('DD.MM.YYYY')}</div>
+                                        <div className="dashboard__list-info">
+                                            <Link className="inline" to={"/project/" + key} title="Show Project"><i className="material-icons">visibility</i></Link>
+                                            {isProjectOwner ? <button onClick={() => $this.deleteProject(key)}
+                                                                      className="button is-primary">Delete
+                                                Project</button> : ''}
+                                        </div>
+                                        <div className="dashboard__ticket-container">
+                                            <div className="dashboard__sublist-header">ID</div>
+                                            <div className="dashboard__sublist-header">Name</div>
+                                            <div className="dashboard__sublist-header">Status</div>
+                                            <div className="dashboard__sublist-header">Category</div>
+                                            <div className="dashboard__sublist-header">Priority</div>
+                                            <div className="dashboard__sublist-header">Link</div>
+                                            {_.map(_.range(projects[key].tickets.length), function (i) {
+                                                const ticketOwner = projects[key].tickets[i].originUser === userId;
+                                                if (projects[key].tickets[i].user === userId) {
+                                                    return <div>
+                                                        <div
+                                                            className="dashboard__ticket-item">{projects[key].tickets[i].id}</div>
+                                                        <div
+                                                            className="dashboard__ticket-item">{projects[key].tickets[i].name}</div>
+                                                        <div
+                                                            className="dashboard__ticket-item">{state[projects[key].tickets[i].state]}</div>
+                                                        <div
+                                                            className="dashboard__ticket-item">{category[projects[key].tickets[i].category]}</div>
+                                                        <div
+                                                            className="dashboard__ticket-item">{priority[projects[key].tickets[i].priority]}</div>
+                                                        <div className="dashboard__ticket-item">
+                                                            <Link className="inline"
+                                                                  to={"/ticket/" + key + '-' + projects[key].tickets[i].id}>Zum
+                                                                Ticket</Link>
+                                                            {ticketOwner ? <button onClick={() => $this.deleteTicket(i)}
+                                                                                   className="button is-primary">Delete
+                                                                Ticket</button> : ''}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            }
-                                        })}
-                                </li>
-                            }
-                        })}
-                    </ul>
+                                                }
+                                            })}
+                                        </div>
+                                    </li>
+                                }
+                            })}
+                        </ul>
+                    </div>
                 </div>
             );
         }

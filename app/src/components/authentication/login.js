@@ -54,8 +54,8 @@ class Login extends Component {
     render = () => {
         const {handleSubmit, errors, message, loading} = this.props;
         return (
-            <div className={`auth-box ${loading ? 'is-loading' : ''}`}>
-                <h1>Login</h1>
+            <div className={`auth__container ${loading ? 'is-loading' : ''}`}>
+                <h2>Login</h2>
                 <GenericForm
                     onSubmit={handleSubmit(this.handleFormSubmit)}
                     errors={errors}
