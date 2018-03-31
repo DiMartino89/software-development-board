@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { fieldPropTypes } from '../../util/proptype-utils';
+import {fieldPropTypes} from '../../util/proptype-utils';
 
-const StandardSelect = ({ input, children, meta, id, placeholder, defaultValue, label = '', extraClasses = '' }) => {
+const StandardSelect = ({input, children, meta, id, placeholder, defaultValue, label = '', extraClasses = ''}) => {
     return (
         <label htmlFor={id} className="form-label">
             {label}
@@ -25,8 +25,8 @@ const StandardSelect = ({ input, children, meta, id, placeholder, defaultValue, 
 };
 
 StandardSelect.propTypes = {
-  ...fieldPropTypes,
-  children: PropTypes.node,
+    ...fieldPropTypes,
+    children: PropTypes.node,
 };
 
 export default StandardSelect;

@@ -3,18 +3,18 @@ const projectControllers = require('../controllers/project');
 const authControllers = require('../controllers/auth');
 
 const {
-  jwtAuth,
+    jwtAuth,
 } = authControllers;
 
 const {
-  createProject,
-  getProject,
-  getProjects,
-  deleteProject,
-  editProject,
+    createProject,
+    getProject,
+    getProjects,
+    deleteProject,
+    editProject,
 } = projectControllers;
 
-const router = new Router({ prefix: '/project' });
+const router = new Router({prefix: '/project'});
 
 router.post('/create', jwtAuth, createProject);
 router.get('/', jwtAuth, getProjects);

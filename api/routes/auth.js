@@ -2,15 +2,15 @@ const Router = require('koa-router');
 const authControllers = require('../controllers/auth');
 
 const {
-  jwtAuth,
-  login,
-  register,
-  forgotPassword,
-  resetPassword,
-  getAuthenticatedUser,
+    jwtAuth,
+    login,
+    register,
+    forgotPassword,
+    resetPassword,
+    getAuthenticatedUser,
 } = authControllers;
 
-const router = new Router({ prefix: '/auth' });
+const router = new Router({prefix: '/auth'});
 
 router.post('/register', register);
 router.post('/login', login);

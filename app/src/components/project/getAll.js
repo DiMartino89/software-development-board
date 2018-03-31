@@ -25,7 +25,7 @@ export class GetProjects extends Component {
             return (
                 <div>
                     <ul>
-                        {Object.keys(projects).map(function(key, index) {
+                        {Object.keys(projects).map(function (key, index) {
                             return <li>
                                 <p>Project-ID: {key}</p>
                                 <p>Name: {projects[key].name}</p>
@@ -33,7 +33,8 @@ export class GetProjects extends Component {
                                 <p>Projektstart: {Moment(projects[key].begin).format('DD.MM.YYYY')}</p>
                                 <p>Livegang: {Moment(projects[key].end).format('DD.MM.YYYY')}</p>
                                 <p>Tickets: {projects[key].tickets.length}</p>
-                                <p>Link zum Projekt: <Link className="inline" to={"/project/" + key}>Zum Projekt</Link></p>
+                                <p>Link zum Projekt: <Link className="inline" to={"/project/" + key}>Zum Projekt</Link>
+                                </p>
                             </li>
                         })}
                     </ul>

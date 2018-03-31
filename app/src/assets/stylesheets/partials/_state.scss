@@ -1,6 +1,8 @@
 // Animations
 @keyframes spinner {
-  to {transform: rotate(360deg);}
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .is- {
@@ -11,11 +13,11 @@
   &loading {
     display: block;
     position: relative;
-  
+
     > *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
       visibility: hidden;
     }
-  
+
     &::before {
       content: '';
       box-sizing: border-box;

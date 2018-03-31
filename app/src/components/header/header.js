@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {editUser, getAuthenticatedUser, getUsers} from '../../redux/modules/user';
+import {editUser, getUsers} from '../../redux/modules/user';
 import {logoutUser} from '../../redux/modules/authentication';
 import {mobileBreakpoint} from '../../constants/ui-constants';
 import {editProject, getProjects} from "../../redux/modules/project";
@@ -25,7 +25,7 @@ class Header extends Component {
     };
 
     componentDidMount() {
-        if(!this.state.isLogin || !this.state.isRegister) {
+        if (!this.state.isLogin || !this.state.isRegister) {
             this.props.loadProjects();
             this.props.loadUsers();
         }
@@ -95,15 +95,19 @@ class Header extends Component {
                         </li>
                     } else if (user && link.name === 'Invitations') {
                         return <li key={link.name}>
-                            <span onClick={link.onClick} title="Invitations"><i className="material-icons">mail {user.invitations.length > 0 ? <div className="news__icon"><span>{user.invitations.length}</span></div> : ''}</i></span>
+                            <span onClick={link.onClick} title="Invitations"><i
+                                className="material-icons">mail {user.invitations.length > 0 ?
+                                <div className="news__icon"><span>{user.invitations.length}</span>
+                                </div> : ''}</i></span>
                         </li>
                     } else if (user && link.name === 'Avatar') {
                         return <li key={link.name}>
-                            <a href={'/user/' + user.id} title="Profile"><img src={user.avatar} /></a>
+                            <a href={'/user/' + user.id} title="Profile"><img src={user.avatar}/></a>
                         </li>
                     } else if (user && link.name === 'Logout') {
                         return <li key={link.name}>
-                            <a href="javascript:void(null);" onClick={link.onClick} title="Logout"><i className="material-icons">exit_to_app</i></a>
+                            <a href="javascript:void(null);" onClick={link.onClick} title="Logout"><i
+                                className="material-icons">exit_to_app</i></a>
                         </li>
                     } else {
                         return <li key={link.name}>
@@ -158,7 +162,7 @@ class Header extends Component {
         const $this = this;
         return (
             <header className="clearfix">
-                <strong className="logo left"><img src="../../assets/img/sdb-logo.png" className="app-logo" /></strong>
+                <strong className="logo left"><img src="../../assets/img/sdb-logo.png" className="app-logo"/></strong>
                 {isMobile &&
                 <a
                     href="javascript:void(null);"
@@ -186,7 +190,8 @@ class Header extends Component {
                                 <button onClick={() => $this.signToProject(i, project.id)}
                                         className="button is-primary">✔
                                 </button>
-                                <button onClick={() => $this.refuseInvitation(i)} className="button is-primary">X</button>
+                                <button onClick={() => $this.refuseInvitation(i)} className="button is-primary">X
+                                </button>
                             </li>
                         })}
                     </ul>

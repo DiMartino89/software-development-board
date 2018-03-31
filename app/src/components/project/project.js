@@ -525,15 +525,22 @@ export class SingleProject extends Component {
                                     <p className="ticket__name">{prefix + '-' + tickets[i].id}</p>
                                 </Link>
                                 <div className="ticket__category">
-                                    {tickets[i].category === "1" ? <i className="material-icons" title="Story">speaker_notes</i> : ''}
-                                    {tickets[i].category === "2" ? <i className="material-icons" title="FE-Task">web</i> : ''}
-                                    {tickets[i].category === "3" ? <i className="material-icons" title="BE-Task">developer_board</i> : ''}
+                                    {tickets[i].category === "1" ?
+                                        <i className="material-icons" title="Story">speaker_notes</i> : ''}
+                                    {tickets[i].category === "2" ?
+                                        <i className="material-icons" title="FE-Task">web</i> : ''}
+                                    {tickets[i].category === "3" ?
+                                        <i className="material-icons" title="BE-Task">developer_board</i> : ''}
                                 </div>
                                 <div className="ticket__priority">
-                                    {tickets[i].priority === "1" ? <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
-                                    {tickets[i].priority === "2" ? <i className="material-icons p-2" title="Medium">radio_button_unchecked</i> : ''}
-                                    {tickets[i].priority === "3" ? <i className="material-icons p-3" title="High">priority_high</i> : ''}
-                                    {tickets[i].priority === "4" ? <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
+                                    {tickets[i].priority === "1" ?
+                                        <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
+                                    {tickets[i].priority === "2" ? <i className="material-icons p-2"
+                                                                      title="Medium">radio_button_unchecked</i> : ''}
+                                    {tickets[i].priority === "3" ?
+                                        <i className="material-icons p-3" title="High">priority_high</i> : ''}
+                                    {tickets[i].priority === "4" ?
+                                        <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
                                 </div>
                             </div>
                             <div className="ticket__row">
@@ -618,9 +625,11 @@ export class SingleProject extends Component {
                             {isActive ? <span className="is-active">Active</span> :
                                 <span className="not-active">Not Active</span>}
                             {isProjectOwner ?
-                                <button onClick={() => this.deleteProject}><i className="material-icons">delete</i></button> : ''}
+                                <button onClick={() => this.deleteProject}><i className="material-icons">delete</i>
+                                </button> : ''}
                             {isProjectOwner ?
-                                <button onClick={this.onOpenModal3}><i className="material-icons">border_color</i></button> : ''}
+                                <button onClick={this.onOpenModal3}><i className="material-icons">border_color</i>
+                                </button> : ''}
                         </div>
                         <div className="project__action">
                             <Select
@@ -685,7 +694,8 @@ export class SingleProject extends Component {
                                         {_.map(_.range($this.state.invitations.length), function (i) {
                                             return <li className="invitation__item">
                                                 <span>{$this.state.invitations[i].label}</span>
-                                                <button onClick={() => $this.removeUser(i)} className="button is-primary">X
+                                                <button onClick={() => $this.removeUser(i)}
+                                                        className="button is-primary">X
                                                 </button>
                                             </li>
                                         })}

@@ -14,7 +14,7 @@ const standardizeProject = project => ({
     end: _.get(project, 'end') || '',
     sprints: _.get(project, 'sprints') || '',
     users: _.get(project, 'users') || '',
-    tickets:  _.get(project, 'tickets') || '',
+    tickets: _.get(project, 'tickets') || '',
 });
 
 module.exports = {

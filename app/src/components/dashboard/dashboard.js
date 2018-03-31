@@ -82,7 +82,8 @@ export class Dashboard extends Component {
                                         <div className="dashboard__list-info last">
                                             <Link className="inline" to={"/project/" + key} title="Show Project"><i
                                                 className="material-icons">visibility</i></Link>
-                                            {isProjectOwner ? <button onClick={() => $this.deleteProject(key)}><i className="material-icons">delete</i></button> : ''}
+                                            {isProjectOwner ? <button onClick={() => $this.deleteProject(key)}><i
+                                                className="material-icons">delete</i></button> : ''}
                                         </div>
                                         <div className="dashboard__ticket-container">
                                             <div className="dashboard__sublist-header">ID</div>
@@ -103,23 +104,39 @@ export class Dashboard extends Component {
                                                             className="dashboard__ticket-item">{state[projects[key].tickets[i].state]}</div>
                                                         <div
                                                             className="dashboard__ticket-item">
-                                                            {projects[key].tickets[i].category === "1" ? <i className="material-icons" title="Story">speaker_notes</i> : ''}
-                                                            {projects[key].tickets[i].category === "2" ? <i className="material-icons" title="FE-Task">web</i> : ''}
-                                                            {projects[key].tickets[i].category === "3" ? <i className="material-icons" title="BE-Task">developer_board</i> : ''}
+                                                            {projects[key].tickets[i].category === "1" ?
+                                                                <i className="material-icons"
+                                                                   title="Story">speaker_notes</i> : ''}
+                                                            {projects[key].tickets[i].category === "2" ?
+                                                                <i className="material-icons"
+                                                                   title="FE-Task">web</i> : ''}
+                                                            {projects[key].tickets[i].category === "3" ?
+                                                                <i className="material-icons"
+                                                                   title="BE-Task">developer_board</i> : ''}
                                                             {category[projects[key].tickets[i].category]}</div>
                                                         <div
                                                             className="dashboard__ticket-item">
-                                                            {projects[key].tickets[i].priority === "1" ? <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
-                                                            {projects[key].tickets[i].priority === "2" ? <i className="material-icons p-2" title="Medium">radio_button_unchecked</i> : ''}
-                                                            {projects[key].tickets[i].priority === "3" ? <i className="material-icons p-3" title="High">priority_high</i> : ''}
-                                                            {projects[key].tickets[i].priority === "4" ? <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
+                                                            {projects[key].tickets[i].priority === "1" ?
+                                                                <i className="material-icons p-1"
+                                                                   title="Low">arrow_downward</i> : ''}
+                                                            {projects[key].tickets[i].priority === "2" ?
+                                                                <i className="material-icons p-2"
+                                                                   title="Medium">radio_button_unchecked</i> : ''}
+                                                            {projects[key].tickets[i].priority === "3" ?
+                                                                <i className="material-icons p-3"
+                                                                   title="High">priority_high</i> : ''}
+                                                            {projects[key].tickets[i].priority === "4" ?
+                                                                <i className="material-icons p-4"
+                                                                   title="Blocker">do_not_disturb_alt</i> : ''}
                                                             {priority[projects[key].tickets[i].priority]}</div>
                                                         <div className="dashboard__ticket-item">
                                                             <Link className="inline"
                                                                   to={"/ticket/" + key + '-' + projects[key].tickets[i].id}
                                                                   title="Show Project"><i
                                                                 className="material-icons">visibility</i></Link>
-                                                            {ticketOwner ? <button onClick={() => $this.deleteTicket(i)}><i className="material-icons">delete</i></button> : ''}
+                                                            {ticketOwner ?
+                                                                <button onClick={() => $this.deleteTicket(i)}><i
+                                                                    className="material-icons">delete</i></button> : ''}
                                                         </div>
                                                     </div>
                                                 }

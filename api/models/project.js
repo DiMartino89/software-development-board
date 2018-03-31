@@ -9,7 +9,7 @@ const ProjectSchema = new Schema({
         name: {type: String, required: true},
         prefix: {type: String, required: true},
         description: {type: String},
-        begin: {type: Date, default: Date.now, required: true },
+        begin: {type: Date, default: Date.now, required: true},
         end: {type: Date, required: true},
         sprints: [],
         users: [],

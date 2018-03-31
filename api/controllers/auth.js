@@ -7,9 +7,9 @@ const emailUtils = require('../utils/email-utils');
 const validationUtils = require('../utils/validation-utils');
 const ERRORS = require('../constants').ERRORS;
 
-const { standardizeUser, generateJWT, getRole } = userUtils;
-const { sendEmail } = emailUtils;
-const { responseValidator } = validationUtils;
+const {standardizeUser, generateJWT, getRole} = userUtils;
+const {sendEmail} = emailUtils;
+const {responseValidator} = validationUtils;
 
 /**
  * createTokenCtx  - Creates JWT info for ctx.body
@@ -36,11 +36,11 @@ exports.jwtAuth = (ctx, next) => passport.authenticate('jwt', async (err, payloa
     // If there is no payload, inform the user they are not authorized to see the content
     if (!payload) {
         ctx.status = 401;
-        ctx.body = { errors: { error: ERRORS.JWT_FAILURE }, jwtExpired: true };
+        ctx.body = {errors: {error: ERRORS.JWT_FAILURE}, jwtExpired: true};
         // Check if JWT has expired, return error if so
     } else if (payload.exp <= epochTimestamp) {
         ctx.status = 401;
-        ctx.body = { errors: { error: ERRORS.JWT_EXPIRED }, jwtExpired: true };
+        ctx.body = {errors: {error: ERRORS.JWT_EXPIRED}, jwtExpired: true};
     } else {
         // Add user to state
         ctx.state.user = payload;
@@ -55,7 +55,7 @@ exports.jwtAuth = (ctx, next) => passport.authenticate('jwt', async (err, payloa
 exports.login = (ctx, next) => passport.authenticate('local', async (err, user) => {
     if (!user || !Object.keys(user).length) {
         ctx.status = 401;
-        ctx.body = { errors: [{ error: ERRORS.BAD_LOGIN }] };
+        ctx.body = {errors: [{error: ERRORS.BAD_LOGIN}]};
         await next();
     } else {
         ctx.body = Object.assign(ctx.body || {}, createTokenCtx(user));
@@ -71,27 +71,27 @@ exports.login = (ctx, next) => passport.authenticate('local', async (err, user) 
 exports.register = async (ctx, next) => {
     // Check for registration errors
     const validation = responseValidator(ctx.request.body, [
-        { name: 'email', required: true },
-        { name: 'name', required: true },
-        { name: 'password', required: true },
+        {name: 'email', required: true},
+        {name: 'name', required: true},
+        {name: 'password', required: true},
     ]);
 
     if (validation && validation.length && validation[0].error) {
         ctx.status = 422;
-        ctx.body = { errors: validation };
+        ctx.body = {errors: validation};
         await next();
     }
 
-    const { email, password, name } = validation;
+    const {email, password, name} = validation;
 
     if (email && password && name) {
         const formattedEmail = email.toLowerCase();
         try {
-            let user = await User.findOne({ email: formattedEmail });
+            let user = await User.findOne({email: formattedEmail});
 
             if (user !== null) {
                 ctx.status = 422;
-                ctx.body = { errors: [{ error: ERRORS.ALREADY_REGISTERED }] };
+                ctx.body = {errors: [{error: ERRORS.ALREADY_REGISTERED}]};
                 await next();
             } else {
                 user = new User({
@@ -120,11 +120,11 @@ exports.register = async (ctx, next) => {
  *                  actually reset a password. Sends link in email for security.
  */
 exports.forgotPassword = async (ctx, next) => {
-    const { email } = ctx.request.body;
+    const {email} = ctx.request.body;
     try {
         const buffer = await crypto.randomBytes(48);
         const resetToken = buffer.toString('hex');
-        const user = await User.findOneAndUpdate({ email },
+        const user = await User.findOneAndUpdate({email},
             {
                 resetPasswordToken: resetToken,
                 resetPasswordExpires: moment().add(1, 'hour'),
@@ -158,25 +158,25 @@ exports.forgotPassword = async (ctx, next) => {
  * resetPassword  - Allows user with token from email to reset their password
  */
 exports.resetPassword = async (ctx, next) => {
-    const { password, confirmPassword } = ctx.request.body;
-    const { resetToken } = ctx.params;
+    const {password, confirmPassword} = ctx.request.body;
+    const {resetToken} = ctx.params;
 
     try {
         if (password && confirmPassword && password !== confirmPassword) {
             ctx.status = 422;
-            ctx.body = { errors: [{ error: ERRORS.PASSWORD_CONFIRM_FAIL }] };
+            ctx.body = {errors: [{error: ERRORS.PASSWORD_CONFIRM_FAIL}]};
         } else {
             const user = await User.findOneAndUpdate(
-                { resetPasswordToken: resetToken, resetPasswordExpires: { $gt: Date.now() } },
-                { password, resetPasswordToken: undefined, resetPasswordExpires: undefined });
+                {resetPasswordToken: resetToken, resetPasswordExpires: {$gt: Date.now()}},
+                {password, resetPasswordToken: undefined, resetPasswordExpires: undefined});
 
             if (!user) {
                 // If no user was found, their reset request likely expired. Tell them that.
                 ctx.status = 422;
-                ctx.body = { errors: [{ error: ERRORS.PASSWORD_RESET_EXPIRED }] };
+                ctx.body = {errors: [{error: ERRORS.PASSWORD_RESET_EXPIRED}]};
             } else {
                 // If the user reset their password successfully, let them know
-                ctx.body = { message: 'Your password has been successfully updated. Please login with your new password.' };
+                ctx.body = {message: 'Your password has been successfully updated. Please login with your new password.'};
             }
             await next();
         }
@@ -190,13 +190,13 @@ exports.resetPassword = async (ctx, next) => {
  */
 exports.requireRole = async role =>
     async (ctx, next) => {
-        const { user } = ctx.state.user;
+        const {user} = ctx.state.user;
         try {
             const foundUser = await User.findById(user.id);
             // If the user couldn't be found, return an error
             if (!foundUser) {
                 ctx.status = 404;
-                ctx.body = { errors: [{ error: ERRORS.USER_NOT_FOUND }] };
+                ctx.body = {errors: [{error: ERRORS.USER_NOT_FOUND}]};
             } else {
                 // Otherwise, continue checking role
                 if (getRole(user.role) >= getRole(role)) {
@@ -204,7 +204,7 @@ exports.requireRole = async role =>
                 }
 
                 ctx.status = 403;
-                ctx.body = { errors: [{ error: ERRORS.NO_PERMISSION }] };
+                ctx.body = {errors: [{error: ERRORS.NO_PERMISSION}]};
             }
         } catch (err) {
             ctx.throw(500, err);
@@ -217,6 +217,6 @@ exports.requireRole = async role =>
 exports.getAuthenticatedUser = async (ctx, next) => {
     const user = await User.findById(ctx.state.user.id);
     ctx.status = 200;
-    ctx.body = { user: standardizeUser(user) };
+    ctx.body = {user: standardizeUser(user)};
     await next();
 };

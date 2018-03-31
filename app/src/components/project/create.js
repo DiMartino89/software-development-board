@@ -7,7 +7,6 @@ import TextInput from '../form-fields/text-input';
 import Textarea from '../form-fields/text-area';
 import GenericForm from '../form-fields/generic-form';
 import {createProject} from '../../redux/modules/project';
-import {errorPropTypes} from '../../util/proptype-utils';
 import Moment from "moment/moment";
 
 const form = reduxForm({
@@ -90,7 +89,9 @@ class CreateProject extends Component {
                     formSpec={CreateProject.formSpec}
                     submitText="Create"
                 />
-                <Link className="inline cancel" to="/dashboard"><button className="button is-primary">Cancel</button></Link>
+                <Link className="inline cancel" to="/dashboard">
+                    <button className="button is-primary">Cancel</button>
+                </Link>
             </div>
         );
     }

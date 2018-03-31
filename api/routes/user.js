@@ -6,17 +6,17 @@ const userControllers = require('../controllers/user');
 const authControllers = require('../controllers/auth');
 
 const {
-  jwtAuth,
+    jwtAuth,
 } = authControllers;
 
 const {
-  getUser,
-  getUsers,
-  deleteUser,
-  editUser,
+    getUser,
+    getUsers,
+    deleteUser,
+    editUser,
 } = userControllers;
 
-const router = new Router({ prefix: '/user' });
+const router = new Router({prefix: '/user'});
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -29,14 +29,14 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({storage: storage});
 
 router.post('/avatar', upload.single('file'),
     async (ctx, next) => {
         try {
             const ext = ctx.req.file.filename.split('.')[1];
-            fs.rename('../api/uploads/' + ctx.req.file.filename, '../api/uploads/'+ ctx.req.body.filename + '.' + ext , function(err) {
-                if ( err ) console.log('ERROR: ' + err);
+            fs.rename('../api/uploads/' + ctx.req.file.filename, '../api/uploads/' + ctx.req.body.filename + '.' + ext, function (err) {
+                if (err) console.log('ERROR: ' + err);
             });
             ctx.body = {
                 status: true,
@@ -67,7 +67,7 @@ router.get('/:id/avatar', jwtAuth,
                 info: err.message,
             }
         }
-});
+    });
 router.get('/', jwtAuth, getUsers);
 router.get('/:id', jwtAuth, getUser);
 router.delete('/:id', jwtAuth, deleteUser);
