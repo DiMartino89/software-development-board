@@ -55,8 +55,16 @@
   button {
     display: inline-block;
     margin: 6px 0;
-    width: 15%;
+    width: 7.5%;
     float: right;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: 0 none;
+
+    i {
+      font-size: 30px;
+    }
   }
 }
 

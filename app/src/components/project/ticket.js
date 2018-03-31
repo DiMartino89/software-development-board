@@ -372,11 +372,10 @@ export class SingleTicket extends Component {
                             {isActive ? <span className="is-active">{state[ticket.state]}</span> : ''}
                             {isClosed ? <span className="not-active">{state[ticket.state]}</span> : ''}
                             {isTicketOwner ?
-                                <button onClick={() => this.deleteTicket(ticket.id)}
-                                        className="button is-primary">Delete
-                                    Ticket</button> : ''}
-                            <button onClick={this.onOpenModal} className="button is-primary">Update
-                                Ticket
+                                <button onClick={() => this.deleteTicket(ticket.id)}>
+                                    <i className="material-icons">delete</i></button> : ''}
+                            <button onClick={this.onOpenModal}>
+                                <i className="material-icons">border_color</i>
                             </button>
                         </div>
                         <div className="ticket__info-container">
@@ -425,7 +424,8 @@ export class SingleTicket extends Component {
                                 <ul className="files__list">
                                     {_.map(_.range(ticket.files.length), function (i) {
                                         return <li className="file__item">
-                                            <img src={ticket.files[i].file} onClick={() => $this.onOpenImageModal(ticket.files[i].file)}/>
+                                            <img src={ticket.files[i].file}
+                                                 onClick={() => $this.onOpenImageModal(ticket.files[i].file)}/>
                                             <span>{ticket.files[i].uploadedAt}</span>
                                         </li>
                                     })}
@@ -530,7 +530,7 @@ export class SingleTicket extends Component {
                         />
                     </Modal>
                     <Modal open={open2} onClose={this.onCloseImageModal} classNames={{'modal': 'image-modal'}} little>
-                        <img src={this.state.image} />
+                        <img src={this.state.image}/>
                     </Modal>
                 </div>
             );

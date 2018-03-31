@@ -602,7 +602,7 @@ export class SingleProject extends Component {
             this.state.layout = this.generateLayout();
             this.getInvitations();
             const $this = this;
-            const isActive = Date.now() > Date.parse(project.begin) || !project.deactivated;
+            const isActive = Date.now() > Date.parse(project.begin) && Date.now() < Date.parse(project.end);
             let timeLeft = '';
             if (Date.now() > Date.parse(project.begin)) {
                 timeLeft = Date.parse(project.end) - Date.now();
@@ -618,10 +618,9 @@ export class SingleProject extends Component {
                             {isActive ? <span className="is-active">Active</span> :
                                 <span className="not-active">Not Active</span>}
                             {isProjectOwner ?
-                                <button onClick={() => this.deleteProject} className="button is-primary">Projekt löschen</button> : ''}
+                                <button onClick={() => this.deleteProject}><i className="material-icons">delete</i></button> : ''}
                             {isProjectOwner ?
-                                <button onClick={this.onOpenModal3} className="button is-primary">Update
-                                    Projekt</button> : ''}
+                                <button onClick={this.onOpenModal3}><i className="material-icons">border_color</i></button> : ''}
                         </div>
                         <div className="project__action">
                             <Select

@@ -215,12 +215,12 @@ export class SingleSprint extends Component {
     onOpenModal2 = () => {
         const projectData = this.props.project;
         const sprintId = window.location.href.split('/')[4].split('-')[1];
-        for(let i=0; i < SingleSprint.formSpec2.length; i++) {
-            Object.keys(SingleSprint.formSpec2[i]).forEach(function(fKey) {
-                if(fKey === 'name') {
-                    Object.keys(projectData.sprints[sprintId]).forEach(function(pKey) {
-                        if(pKey === SingleSprint.formSpec2[i][fKey]) {
-                            if(pKey === 'begin' || pKey === 'end') {
+        for (let i = 0; i < SingleSprint.formSpec2.length; i++) {
+            Object.keys(SingleSprint.formSpec2[i]).forEach(function (fKey) {
+                if (fKey === 'name') {
+                    Object.keys(projectData.sprints[sprintId]).forEach(function (pKey) {
+                        if (pKey === SingleSprint.formSpec2[i][fKey]) {
+                            if (pKey === 'begin' || pKey === 'end') {
                                 SingleSprint.formSpec2[i]['defaultValue'] = Moment(projectData.sprints[sprintId][pKey]).format('YYYY-MM-DD');
                             } else {
                                 SingleSprint.formSpec2[i]['defaultValue'] = projectData.sprints[sprintId][pKey];
@@ -383,15 +383,22 @@ export class SingleSprint extends Component {
                                 <p className="ticket__name">{prefix + '-' + tickets[i].id}</p>
                             </Link>
                             <div className="ticket__category">
-                                {tickets[i].category === "1" ? <i className="material-icons" title="Story">speaker_notes</i> : ''}
-                                {tickets[i].category === "2" ? <i className="material-icons" title="FE-Task">web</i> : ''}
-                                {tickets[i].category === "3" ? <i className="material-icons" title="BE-Task">developer_board</i> : ''}
+                                {tickets[i].category === "1" ?
+                                    <i className="material-icons" title="Story">speaker_notes</i> : ''}
+                                {tickets[i].category === "2" ?
+                                    <i className="material-icons" title="FE-Task">web</i> : ''}
+                                {tickets[i].category === "3" ?
+                                    <i className="material-icons" title="BE-Task">developer_board</i> : ''}
                             </div>
                             <div className="ticket__priority">
-                                {tickets[i].priority === "1" ? <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
-                                {tickets[i].priority === "2" ? <i className="material-icons p-2" title="Medium">radio_button_unchecked</i> : ''}
-                                {tickets[i].priority === "3" ? <i className="material-icons p-3" title="High">priority_high</i> : ''}
-                                {tickets[i].priority === "4" ? <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
+                                {tickets[i].priority === "1" ?
+                                    <i className="material-icons p-1" title="Low">arrow_downward</i> : ''}
+                                {tickets[i].priority === "2" ?
+                                    <i className="material-icons p-2" title="Medium">radio_button_unchecked</i> : ''}
+                                {tickets[i].priority === "3" ?
+                                    <i className="material-icons p-3" title="High">priority_high</i> : ''}
+                                {tickets[i].priority === "4" ?
+                                    <i className="material-icons p-4" title="Blocker">do_not_disturb_alt</i> : ''}
                             </div>
                         </div>
                         <div className="ticket__row">
@@ -460,7 +467,7 @@ export class SingleSprint extends Component {
             const sprint = this.props.project.sprints[window.location.href.split('-')[1]];
             const options = this.createOptions2();
             const isProjectOwner = project.users[0] === currUser.id;
-            const isActive = Date.now() > Date.parse(sprint.begin) || sprint.isActive;
+            const isActive = Date.now() > Date.parse(sprint.begin) && Date.now() < Date.parse(sprint.end);
             let timeLeft = '';
             if (Date.now() > Date.parse(sprint.begin)) {
                 timeLeft = Date.parse(sprint.end) - Date.now();
@@ -477,12 +484,11 @@ export class SingleSprint extends Component {
                             {isActive ? <span className="is-active">Active</span> :
                                 <span className="not-active">Not Active</span>}
                             {isProjectOwner ?
-                                <button onClick={() => this.deleteSprint(sprint.id)}
-                                        className="button is-primary">Delete
-                                    Sprint</button> : ''}
+                                <button onClick={() => this.deleteSprint(sprint.id)}><i
+                                    className="material-icons">delete</i></button> : ''}
                             {isProjectOwner ?
-                                <button onClick={this.onOpenModal2} className="button is-primary">Update
-                                    Sprint</button> : ''}
+                                <button onClick={this.onOpenModal2}><i
+                                    className="material-icons">border_color</i></button> : ''}
                         </div>
                         <div className="sprint__action">
                             <Select
