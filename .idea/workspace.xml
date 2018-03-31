@@ -2,54 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="471db8b7-e8b1-4d9c-8159-8618ba6d942d" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/api/config/auth.js" afterPath="$PROJECT_DIR$/api/config/auth.js" />
-      <change beforePath="$PROJECT_DIR$/api/config/database.js" afterPath="$PROJECT_DIR$/api/config/database.js" />
-      <change beforePath="$PROJECT_DIR$/api/config/email.js" afterPath="$PROJECT_DIR$/api/config/email.js" />
-      <change beforePath="$PROJECT_DIR$/api/config/index.js" afterPath="$PROJECT_DIR$/api/config/index.js" />
-      <change beforePath="$PROJECT_DIR$/api/config/server.js" afterPath="$PROJECT_DIR$/api/config/server.js" />
-      <change beforePath="$PROJECT_DIR$/api/controllers/auth.js" afterPath="$PROJECT_DIR$/api/controllers/auth.js" />
-      <change beforePath="$PROJECT_DIR$/api/models/project.js" afterPath="$PROJECT_DIR$/api/models/project.js" />
-      <change beforePath="$PROJECT_DIR$/api/models/user.js" afterPath="$PROJECT_DIR$/api/models/user.js" />
-      <change beforePath="$PROJECT_DIR$/api/routes/auth.js" afterPath="$PROJECT_DIR$/api/routes/auth.js" />
-      <change beforePath="$PROJECT_DIR$/api/routes/project.js" afterPath="$PROJECT_DIR$/api/routes/project.js" />
-      <change beforePath="$PROJECT_DIR$/api/routes/user.js" afterPath="$PROJECT_DIR$/api/routes/user.js" />
-      <change beforePath="$PROJECT_DIR$/api/test/project.test.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/api/test/user.test.js" afterPath="$PROJECT_DIR$/api/test/user.test.js" />
-      <change beforePath="$PROJECT_DIR$/api/utils/email-utils.js" afterPath="$PROJECT_DIR$/api/utils/email-utils.js" />
-      <change beforePath="$PROJECT_DIR$/api/utils/error-utils.js" afterPath="$PROJECT_DIR$/api/utils/error-utils.js" />
-      <change beforePath="$PROJECT_DIR$/api/utils/project-utils.js" afterPath="$PROJECT_DIR$/api/utils/project-utils.js" />
-      <change beforePath="$PROJECT_DIR$/api/utils/validation-utils.js" afterPath="$PROJECT_DIR$/api/utils/validation-utils.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/assets/stylesheets/partials/_buttons.scss" afterPath="$PROJECT_DIR$/app/src/assets/stylesheets/partials/_buttons.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/assets/stylesheets/partials/_mixins.scss" afterPath="$PROJECT_DIR$/app/src/assets/stylesheets/partials/_mixins.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/assets/stylesheets/partials/_state.scss" afterPath="$PROJECT_DIR$/app/src/assets/stylesheets/partials/_state.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/authentication/authentication.scss" afterPath="$PROJECT_DIR$/app/src/components/authentication/authentication.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/authentication/forgot-password.js" afterPath="$PROJECT_DIR$/app/src/components/authentication/forgot-password.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/dashboard/dashboard.js" afterPath="$PROJECT_DIR$/app/src/components/dashboard/dashboard.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/form-fields/checkbox.js" afterPath="$PROJECT_DIR$/app/src/components/form-fields/checkbox.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/form-fields/generic-form.js" afterPath="$PROJECT_DIR$/app/src/components/form-fields/generic-form.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/form-fields/select.js" afterPath="$PROJECT_DIR$/app/src/components/form-fields/select.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/form-fields/text-area.js" afterPath="$PROJECT_DIR$/app/src/components/form-fields/text-area.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/form-fields/text-input.js" afterPath="$PROJECT_DIR$/app/src/components/form-fields/text-input.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/general/card.js" afterPath="$PROJECT_DIR$/app/src/components/general/card.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/general/modal.js" afterPath="$PROJECT_DIR$/app/src/components/general/modal.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/general/modal.scss" afterPath="$PROJECT_DIR$/app/src/components/general/modal.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/header/header.js" afterPath="$PROJECT_DIR$/app/src/components/header/header.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/notification/alert.js" afterPath="$PROJECT_DIR$/app/src/components/notification/alert.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/project/backlog.js" afterPath="$PROJECT_DIR$/app/src/components/project/backlog.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/project/create.js" afterPath="$PROJECT_DIR$/app/src/components/project/create.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/project/getAll.js" afterPath="$PROJECT_DIR$/app/src/components/project/getAll.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/project/project.js" afterPath="$PROJECT_DIR$/app/src/components/project/project.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/project/project.scss" afterPath="$PROJECT_DIR$/app/src/components/project/project.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/project/sprint.scss" afterPath="$PROJECT_DIR$/app/src/components/project/sprint.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/components/user/user.scss" afterPath="$PROJECT_DIR$/app/src/components/user/user.scss" />
-      <change beforePath="$PROJECT_DIR$/app/src/constants/key-constants.js" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/redux/index.js" afterPath="$PROJECT_DIR$/app/src/redux/index.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/routes/authenticated/index.js" afterPath="$PROJECT_DIR$/app/src/routes/authenticated/index.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/util/cookie-utils.js" afterPath="$PROJECT_DIR$/app/src/util/cookie-utils.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/util/environment-utils.js" afterPath="$PROJECT_DIR$/app/src/util/environment-utils.js" />
-      <change beforePath="$PROJECT_DIR$/app/src/util/store-utils.js" afterPath="$PROJECT_DIR$/app/src/util/store-utils.js" />
+      <change beforePath="$PROJECT_DIR$/api/uploads/5ab92fec77198d27f4826485.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/api/uploads/default.png" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -359,12 +313,12 @@
       <workItem from="1522236501133" duration="21357000" />
       <workItem from="1522326814916" duration="34068000" />
       <workItem from="1522408771971" duration="28765000" />
-      <workItem from="1522490024272" duration="6620000" />
+      <workItem from="1522490024272" duration="6771000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="497018000" />
+    <option name="totallyTimeSpent" value="497169000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
