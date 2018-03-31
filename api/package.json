@@ -1,14 +1,14 @@
 {
-  "name": "mkrn-api",
+  "name": "sdb-api",
   "version": "1.0.0",
-  "description": "Koa-based API for MKRN starter.",
+  "description": "Koa-based API for SDB.",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
     "test": "jest --coverage --watch"
   },
-  "repository": "https://github.com/joshuaslate/mkrn-starter.git",
-  "author": "Joshua Anderson Slate",
+  "repository": "https://github.com/DiMartino89/software-development-board",
+  "author": "",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^1.0.2",

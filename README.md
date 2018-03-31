@@ -1,8 +1,21 @@
-# MKRN Starter
-Starter/seed project for MongoDB, Koa, React/Redux, Node full-stack JavaScript apps.
+# Scrum development Board
 
-## Contributions
-Please feel free to contribute to this project. Whether it's features, tests, or code cleanup, any help is welcome at this point.
+Tool to manage project on a scrum-basis
 
-### Contact
-Please send inquiries to josh(at)slatepeak.com, or use the contact form at https://slatepeak.com to contact me.
+## Project-Setup
+1. Download NodeJS (https://nodejs.org/en/download/) and install (in my case v.8.9.3)
+
+2. Download MongoDB, install and create data-directory via cmd ```md \data\db```
+
+3. BASH: Clone Project and install (```npm i```) node-modules in root-, api- and app-folder
+
+4. CMD: Open MongoDB\Server\3.6\bin folder and run ```mongod.exe```
+
+5. BASH: Start app by running ```npm start``` from project-root
+
+Hint: Before restarting app, run ```npm stop``` to kill all running node-processes (blocked ports)
+
+## Technology-Stack
+* Client: ReactJS + Redux
+* Server: NodeJS + KoaJS
+* DB: MongoDB

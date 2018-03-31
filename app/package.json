@@ -1,9 +1,9 @@
 {
-  "name": "mkrn-app",
+  "name": "sdb-app",
   "version": "1.0.0",
-  "description": "React/Redux client-side for MKRN stack app.",
+  "description": "React/Redux client-side for SDB app.",
   "main": "index.js",
-  "author": "Joshua Anderson Slate",
+  "author": "",
   "license": "MIT",
   "scripts": {
     "start": "webpack-dev-server --progress --colors --hot",

@@ -7,9 +7,9 @@ RUN apt-get install -y zip curl vim
 RUN npm install -g pm2
 
 # create api directory
-RUN mkdir -p /www/mkrn-starter-apipm2
-WORKDIR /www/mkrn-starter-api
-COPY . /www/mkrn-starter-api
+RUN mkdir -p /www/sdb-apipm2
+WORKDIR /www/sdb-api
+COPY . /www/sdb-api
 
 # install application
 RUN yarn install

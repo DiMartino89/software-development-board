@@ -15,11 +15,11 @@ export const getEnvironment = () => process.env.NODE_ENV
 export const getApiUrl = () => {
   switch (getEnvironment()) {
     case 'production':
-      return 'http://api.mkrn-domain.com';
+      return 'http://api.sdb-domain.com';
     case 'stage':
-      return 'http://api-stage.mkrn-stage-domain.com';
+      return 'http://api-stage.sdb-stage-domain.com';
     case 'test':
-      return 'http://api-test.mkrn-test-domain.com';
+      return 'http://api-test.sdb-test-domain.com';
     case 'development':
     default:
       return 'http://localhost:3000';
@@ -34,11 +34,11 @@ export const getApiUrl = () => {
 export const getAppUrl = () => {
   switch (getEnvironment()) {
     case 'production':
-      return 'http://app.mkrn-domain.com';
+      return 'http://app.sdb-domain.com';
     case 'stage':
-      return 'http://app-stage.mkrn-stage-domain.com';
+      return 'http://app-stage.sdb-stage-domain.com';
     case 'test':
-      return 'http://app-test.mkrn-test-domain.com';
+      return 'http://app-test.sdb-test-domain.com';
     case 'development':
     default:
       return 'http://localhost:8080';

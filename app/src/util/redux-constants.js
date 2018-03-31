@@ -1,5 +1,5 @@
 // Namespace for application
-export const APP_NAMESPACE = 'mkrn-starter';
+export const APP_NAMESPACE = 'sdb';
 
 // Request status indicators
 export const PENDING = 'PENDING';
