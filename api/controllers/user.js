@@ -44,7 +44,7 @@ exports.editUser = async (ctx, next) => {
         await User.findOneAndUpdate({_id: ctx.params.id}, ctx.request.body);
         const user = await User.findById(ctx.params.id);
         ctx.status = 200;
-        ctx.body = {project: standardizeUser(user)};
+        ctx.body = {user: standardizeUser(user)};
         await next();
     } catch (err) {
         ctx.throw(500, err);
